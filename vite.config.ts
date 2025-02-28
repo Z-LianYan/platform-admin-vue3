@@ -28,7 +28,8 @@ const __APP_INFO__ = {
 }
 import UnoCSS from 'unocss/vite'
 // https://vitejs.dev/config/
-export default defineConfig(({ mode }: ConfigEnv) => {
+export default defineConfig(({ mode,command }: ConfigEnv) => {
+  console.log("command===>>",command,__dirname,path.resolve())
   console.log('import.meta======>>>', import.meta, fileURLToPath(new URL('./src', import.meta.url)))
   // mode: development
   // process.cwd(): /Users/lyz/Desktop/vue/vue-admin-device

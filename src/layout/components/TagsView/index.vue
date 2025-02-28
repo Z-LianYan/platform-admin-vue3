@@ -11,6 +11,11 @@
         @contextmenu.prevent="openContentMenu(tag, $event)"
       >
         {{ translateRouteTitle(tag.name, tag.title) }}
+        <svg-icon
+        icon-class="close"
+        v-if="!isAffix(tag)"
+        @click.prevent.stop="closeSelectedTag(tag)"
+        />
         <!-- <i-ep-close
           class="close-icon"
           size="12px"
@@ -91,6 +96,7 @@ const top = ref(0)
 watch(
   route,
   () => {
+    console.log("visitedViews=======>>>",visitedViews.value)
     addTags()
     moveToCurrentTag()
   },
@@ -378,7 +384,7 @@ onMounted(() => {
     padding: 3px 8px;
     margin: 4px 0 0 5px;
     font-size: 12px;
-    cursor: pointer;
+    // cursor: pointer;
     border: 1px solid var(--el-border-color-light);
 
     &:hover {
