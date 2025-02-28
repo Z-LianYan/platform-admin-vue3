@@ -15,7 +15,7 @@
         >
           <SidebarMenuItemTitle
             :icon="onlyOneChild.meta.icon || (item.meta && item.meta.icon)"
-            :title="resolvePath(onlyOneChild.path)"
+            :title="translateRouteTitle(item.name, item.meta.title)"
           />
         </el-menu-item>
       </AppLink>
@@ -25,9 +25,10 @@
     <el-sub-menu v-else :index="resolvePath(item.path)" teleported>
       <template #title>
         <SidebarMenuItemTitle
+          :key="Math.random()"
           v-if="item.meta"
           :icon="item.meta && item.meta.icon"
-          :title="resolvePath(item.path)"
+          :title="translateRouteTitle(item.name, item.meta.title)"
         />
       </template>
 
@@ -42,6 +43,7 @@
   </div>
 </template>
 <script setup lang="ts">
+import { translateRouteTitle } from '@/utils/i18n'
 defineOptions({
   name: 'SidebarMenuItem',
   inheritAttrs: false,
@@ -72,11 +74,6 @@ const props = defineProps({
     default: false,
   },
 })
-
-function onclick(children, item) {
-  console.log('123456789', children, item)
-  router.push(item.meta.url)
-}
 
 const onlyOneChild = ref() // 临时变量，唯一子路由
 
@@ -131,6 +128,7 @@ function resolvePath(routePath: string) {
 
   // 完整路径(/system/user) = 父级路径(/system) + 路由路径(user)
   const fullPath = path.resolve(props.basePath, routePath)
+  console.log('99999', fullPath, props.basePath, routePath)
   return fullPath
 }
 </script>

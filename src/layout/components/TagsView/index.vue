@@ -10,7 +10,7 @@
         @click.middle="!isAffix(tag) ? closeSelectedTag(tag) : ''"
         @contextmenu.prevent="openContentMenu(tag, $event)"
       >
-        {{ translateRouteTitle(tag.title) }}
+        {{ translateRouteTitle(tag.name, tag.title) }}
         <!-- <i-ep-close
           class="close-icon"
           size="12px"
@@ -71,6 +71,7 @@ const tagsViewStore = useTagsViewStore()
 const appStore = useAppStore()
 
 const { visitedViews } = storeToRefs(tagsViewStore)
+console.log('visitedViews===>>', visitedViews.value)
 const settingsStore = useSettingsStore()
 const layout = computed(() => settingsStore.layout)
 
@@ -119,9 +120,9 @@ function filterAffixTags(routes: RouteRecordRaw[], basePath = '/') {
         path: tagPath,
         fullPath: tagPath,
         name: String(route.name),
-        title: route.meta?.title || 'no-name',
-        affix: route.meta?.affix,
-        keepAlive: route.meta?.keepAlive,
+        title: (route.meta?.title as string) || 'no-name',
+        affix: route.meta?.affix as boolean,
+        keepAlive: route.meta?.keepAlive as boolean,
       })
     }
     if (route.children) {
@@ -149,11 +150,11 @@ function addTags() {
   if (route.meta.title) {
     tagsViewStore.addView({
       name: route.name as string,
-      title: route.meta.title,
+      title: route.meta.title as string,
       path: route.path,
       fullPath: route.fullPath,
-      affix: route.meta?.affix,
-      keepAlive: route.meta?.keepAlive,
+      affix: route.meta?.affix as boolean,
+      keepAlive: route.meta?.keepAlive as boolean,
     })
   }
 }
@@ -168,11 +169,11 @@ function moveToCurrentTag() {
         if (tag.fullPath !== route.fullPath) {
           tagsViewStore.updateVisitedView({
             name: route.name as string,
-            title: route.meta.title || '',
+            title: (route.meta.title as string) || '',
             path: route.path,
             fullPath: route.fullPath,
-            affix: route.meta?.affix,
-            keepAlive: route.meta?.keepAlive,
+            affix: route.meta?.affix as boolean,
+            keepAlive: route.meta?.keepAlive as boolean,
           })
         }
       }

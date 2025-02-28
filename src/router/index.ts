@@ -16,7 +16,7 @@ export const constantRoutes: RouteRecordRaw[] = [
     name: 'Layout',
     component: Layout,
     meta: {
-      title: '首页',
+      title: 'Layout布局',
       roles: ['ADMIN'],
       alwaysShow: true,
     },
@@ -30,7 +30,7 @@ export const constantRoutes: RouteRecordRaw[] = [
           roles: ['ADMIN'],
           alwaysShow: false,
           keepAlive: true,
-          affix: true,
+          affix: false,
         },
         // redirect:"/home/test",
         children: [
@@ -200,6 +200,16 @@ export const constantRoutes: RouteRecordRaw[] = [
              },
          ]
      }*/
+
+  // 将匹配所有内容并将其放在 `route.params.pathMatch` 下
+  {
+    path: '/:pathMatch(.*)*',
+    name: 'NotFound',
+    component: () => import('@/views/error-page/404.vue'),
+  },
+
+  // 将匹配以 `/user-` 开头的所有内容，并将其放在 `route.params.afterUser` 下
+  // { path: '/user-:afterUser(.*)', component: UserGeneric },
 ]
 
 /**

@@ -14,19 +14,19 @@
 </template>
 
 <script lang="ts" setup>
-import defaultSettings from "@/settings";
-import { useSettingsStore } from "@/store";
+import defaultSettings from '@/settings'
+import { useSettingsStore } from '@/store'
 
-const settingsStore = useSettingsStore();
+const settingsStore = useSettingsStore()
 
 defineProps({
   collapse: {
     type: Boolean,
     required: true,
   },
-});
+})
 
-const logo = ref(new URL(`../../../../assets/logo.png`, import.meta.url).href);
+const logo = ref(new URL(`../../../../assets/logo.png`, import.meta.url).href)
 </script>
 
 <style lang="scss" scoped>

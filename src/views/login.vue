@@ -167,7 +167,6 @@ const loginRules = computed(() => {
 
 /** 获取验证码 */
 function getCaptcha() {
-  console.log('12345')
   AuthAPI.getCaptcha().then((data: any) => {
     loginData.value.captchaKey = data.captchaKey
     captchaBase64.value = data.captchaBase64

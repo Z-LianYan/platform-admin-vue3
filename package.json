@@ -1,6 +1,7 @@
 {
   "name": "platform-admin-vue3",
-  "version": "0.0.0",
+  "alaisName": "收钱宝后台",
+  "version": "1.0.0",
   "private": true,
   "type": "module",
   "scripts": {

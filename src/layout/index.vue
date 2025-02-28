@@ -15,10 +15,7 @@
       <div class="mix-container__left">
         <SidebarMenu :menu-list="mixLeftMenus" :base-path="activeTopMenuPath" />
         <div class="sidebar-toggle">
-          <hamburger
-            :is-active="appStore.sidebar.opened"
-            @toggle-click="toggleSidebar"
-          />
+          <hamburger :is-active="appStore.sidebar.opened" @toggle-click="toggleSidebar" />
         </div>
       </div>
 
@@ -44,68 +41,66 @@
 </template>
 
 <script setup lang="ts">
-import { useAppStore, useSettingsStore, usePermissionStore } from "@/store";
-import defaultSettings from "@/settings";
-import { DeviceEnum } from "@/enums/DeviceEnum";
-import { LayoutEnum } from "@/enums/LayoutEnum";
+import { useAppStore, useSettingsStore, usePermissionStore } from '@/store'
+import defaultSettings from '@/settings'
+import { DeviceEnum } from '@/enums/DeviceEnum'
+import { LayoutEnum } from '@/enums/LayoutEnum'
 
-const appStore = useAppStore();
-const settingsStore = useSettingsStore();
-const permissionStore = usePermissionStore();
-const width = useWindowSize().width;
+const appStore = useAppStore()
+const settingsStore = useSettingsStore()
+const permissionStore = usePermissionStore()
+const width = useWindowSize().width
 
-const WIDTH_DESKTOP = 992; // 响应式布局容器固定宽度  大屏（>=1200px） 中屏（>=992px） 小屏（>=768px）
-const isMobile = computed(() => appStore.device === DeviceEnum.MOBILE);
-const isOpenSidebar = computed(() => appStore.sidebar.opened);
-const fixedHeader = computed(() => settingsStore.fixedHeader); // 是否固定header
-const showTagsView = computed(() => settingsStore.tagsView); // 是否显示tagsView
-const layout = computed(() => settingsStore.layout); // 布局模式 left top mix
-const activeTopMenuPath = computed(() => appStore.activeTopMenuPath); // 顶部菜单激活path
-const mixLeftMenus = computed(() => permissionStore.mixLeftMenus); // 混合布局左侧菜单
+const WIDTH_DESKTOP = 992 // 响应式布局容器固定宽度  大屏（>=1200px） 中屏（>=992px） 小屏（>=768px）
+const isMobile = computed(() => appStore.device === DeviceEnum.MOBILE)
+const isOpenSidebar = computed(() => appStore.sidebar.opened)
+const fixedHeader = computed(() => settingsStore.fixedHeader) // 是否固定header
+const showTagsView = computed(() => settingsStore.tagsView) // 是否显示tagsView
+const layout = computed(() => settingsStore.layout) // 布局模式 left top mix
+const activeTopMenuPath = computed(() => appStore.activeTopMenuPath) // 顶部菜单激活path
+const mixLeftMenus = computed(() => permissionStore.mixLeftMenus) // 混合布局左侧菜单
 
 watch(
   () => activeTopMenuPath.value,
   (newVal) => {
-    permissionStore.setMixLeftMenus(newVal);
+    permissionStore.setMixLeftMenus(newVal)
   },
   {
     deep: true,
     immediate: true,
-  }
-);
+  },
+)
 
 const classObj = computed(() => ({
   hideSidebar: !appStore.sidebar.opened,
   openSidebar: appStore.sidebar.opened,
   mobile: appStore.device === DeviceEnum.MOBILE,
   [`layout-${settingsStore.layout}`]: true,
-}));
+}))
 
 watchEffect(() => {
-  appStore.toggleDevice(
-    width.value < WIDTH_DESKTOP ? DeviceEnum.MOBILE : DeviceEnum.DESKTOP
-  );
+  appStore.toggleDevice(width.value < WIDTH_DESKTOP ? DeviceEnum.MOBILE : DeviceEnum.DESKTOP)
   if (width.value >= WIDTH_DESKTOP) {
-    appStore.openSideBar();
+    appStore.openSideBar()
   } else {
-    appStore.closeSideBar();
+    appStore.closeSideBar()
   }
-});
+})
 
 function handleOutsideClick() {
-  appStore.closeSideBar();
+  appStore.closeSideBar()
 }
 
 function toggleSidebar() {
-  appStore.toggleSidebar();
+  appStore.toggleSidebar()
 }
 
-const route = useRoute();
+const route = useRoute()
 watch(route, () => {
   if (isMobile.value && isOpenSidebar.value) {
-    appStore.closeSideBar();
+    appStore.closeSideBar()
   }
-});
+})
 </script>
 
 <style lang="scss" scoped>

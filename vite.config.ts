@@ -10,7 +10,7 @@ import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import path from 'path'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
-import { name, version, engines, dependencies, devDependencies } from './package.json'
+import { name, alaisName, version, engines, dependencies, devDependencies } from './package.json'
 import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
 import { resolve } from 'path'
 
@@ -18,7 +18,7 @@ const pathSrc = resolve(__dirname, 'src')
 /** 平台的名称、版本、运行所需的`node`版本、依赖、构建时间的类型提示 */
 const __APP_INFO__ = {
   pkg: {
-    name,
+    name: alaisName,
     version,
     engines,
     dependencies,

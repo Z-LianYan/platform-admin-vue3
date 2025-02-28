@@ -10,7 +10,7 @@ const defaultSettings: AppSettings = {
   showSettings: true,
   tagsView: true,
   fixedHeader: true,
-  sidebarLogo: true,
+  sidebarLogo: false,
   layout: LayoutEnum.LEFT,
   theme: ThemeEnum.LIGHT,
   size: SizeEnum.DEFAULT,
