@@ -28,13 +28,13 @@ const __APP_INFO__ = {
 }
 import UnoCSS from 'unocss/vite'
 // https://vitejs.dev/config/
-export default defineConfig(({ mode }: ConfigEnv) => {
+export default defineConfig(({ mode, command, isSsrBuild, isPreview }: ConfigEnv) => {
   console.log('import.meta======>>>', import.meta, fileURLToPath(new URL('./src', import.meta.url)))
   // mode: development
-  // process.cwd(): /Users/lyz/Desktop/vue/vue-admin-device
+  // process.cwd(): /Users/lyz/Desktop/test/platform-admin-vue3
   const env = loadEnv(mode, process.cwd())
-  console.log('env====>>>', env.VITE_MOCK_DEV_SERVER)
   return {
+    base: './',
     plugins: [
       vue(),
       vueJsx(),
@@ -44,9 +44,6 @@ export default defineConfig(({ mode }: ConfigEnv) => {
       UnoCSS({
         hmrTopLevelAwait: false,
       }),
-      // AutoImport({
-      //   resolvers: [ElementPlusResolver()],
-      // }),
       AutoImport({
         // Auto import functions from Vue, e.g. ref, reactive, toRef...
         // 自动导入 Vue 相关函数，如：ref, reactive, toRef 等
@@ -61,10 +58,10 @@ export default defineConfig(({ mode }: ConfigEnv) => {
           ElementPlusResolver(),
         ],
         // 是否在 vue 模板中自动导入
-        vueTemplate: false,
+        vueTemplate: true,
         //指定自动导入组件TS类型声明文件路径 (false:关闭自动生成)
-        // dts: path.resolve(pathSrc, 'typings', 'auto-imports.d.ts'),// 会自动生成一个文件在src/typings下面 auto-imports.d.ts
-        dts: false,
+        dts: path.resolve(pathSrc, 'typings', 'auto-imports.d.ts'), // 会自动生成一个文件在src/typings下面 auto-imports.d.ts
+        // dts: false,
       }),
       Components({
         resolvers: [
@@ -74,8 +71,8 @@ export default defineConfig(({ mode }: ConfigEnv) => {
         // 指定自定义组件位置(默认:src/components)
         dirs: ['src/components', 'src/**/components'],
         // 指定自动导入组件TS类型声明文件路径 (false:关闭自动生成)
-        // dts: "src/typings/components.d.ts",// 会自动生成一个文件在src/typings下面components.d.ts
-        dts: false,
+        dts: 'src/typings/components.d.ts', // 会自动生成一个文件在src/typings下面components.d.ts
+        // dts: false,
       }),
       createSvgIconsPlugin({
         // 指定需要缓存的图标文件夹

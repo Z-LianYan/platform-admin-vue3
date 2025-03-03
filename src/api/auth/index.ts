@@ -39,7 +39,7 @@ class AuthAPI {
    */
   static getCaptcha() {
     return request<any, CaptchaResult>({
-      url: '/api/v1/auth/captcha',
+      url: '/api/v1/manager/captcha',
       method: 'get',
     })
   }

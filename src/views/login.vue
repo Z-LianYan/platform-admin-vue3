@@ -132,6 +132,8 @@ const { height } = useWindowSize()
 const loginData = ref<LoginData>({
   username: 'admin',
   password: '123456',
+  captchaKey: '',
+  captchaCode: '',
 })
 
 const loginRules = computed(() => {
@@ -168,8 +170,11 @@ const loginRules = computed(() => {
 /** 获取验证码 */
 function getCaptcha() {
   AuthAPI.getCaptcha().then((data: any) => {
+    console.log('=======', data)
     loginData.value.captchaKey = data.captchaKey
     captchaBase64.value = data.captchaBase64
+
+    console.log('loginData====??', loginData.value)
   })
 }
 
