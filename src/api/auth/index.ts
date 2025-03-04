@@ -10,17 +10,17 @@ class AuthAPI {
    */
   static login(data: LoginData) {
     const formData = new FormData()
-    formData.append('username', data.username)
+    formData.append('phone', data.phone)
     formData.append('password', data.password)
     formData.append('captchaKey', data.captchaKey || '')
     formData.append('captchaCode', data.captchaCode || '')
     return request<any, LoginResult>({
-      url: '/api/v1/auth/login',
+      url: '/api/v1/admin/login',
       method: 'post',
       data: formData,
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
+      // headers: {
+      //   'Content-Type': 'multipart/form-data',
+      // },
     })
   }
 
@@ -29,7 +29,7 @@ class AuthAPI {
    */
   static logout() {
     return request({
-      url: '/api/v1/auth/logout',
+      url: '/api/v1/admin/logout',
       method: 'delete',
     })
   }
@@ -39,7 +39,7 @@ class AuthAPI {
    */
   static getCaptcha() {
     return request<any, CaptchaResult>({
-      url: '/api/v1/manager/captcha',
+      url: '/api/v1/admin/getCaptcha',
       method: 'get',
     })
   }

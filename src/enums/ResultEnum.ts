@@ -5,14 +5,14 @@ export const enum ResultEnum {
   /**
    * 成功
    */
-  SUCCESS = "00000",
+  SUCCESS = 200,
   /**
    * 错误
    */
-  ERROR = "B0001",
+  ERROR = 400,
 
   /**
-   * 令牌无效或过期
+   * 令牌无效或过期/（禁止) 服务器拒绝请求。
    */
-  TOKEN_INVALID = "A0230",
+  TOKEN_INVALID = 403,
 }

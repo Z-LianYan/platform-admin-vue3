@@ -1,5 +1,5 @@
 import axios from 'axios'
-// import { useUserStoreHook } from "@/store/modules/user";
+// import { useAdminStoreHook } from "@/store/modules/user";
 import { ResultEnum } from '@/enums/ResultEnum'
 import { ElMessage } from 'element-plus'
 // import { TOKEN_KEY } from "@/enums/CacheEnum";
@@ -34,19 +34,15 @@ service.interceptors.response.use(
     //   return response;
     // }
 
-    // const { code, data, msg } = response.data
-    // if (code === ResultEnum.SUCCESS) {
-    //   return data;
-    // }
-    if (response.status === 200) {
-      return response.data
-    } else {
-      ElMessage.error(response.msg || '系统出错')
-      return Promise.reject(new Error(response.msg || 'Error'))
+    const { code, data, msg } = response.data
+    if (code === ResultEnum.SUCCESS) {
+      return data
     }
+    ElMessage.error(msg || '系统出错')
+    return Promise.reject(new Error(msg || 'Error'))
   },
   (error: any) => {
-    console.log('error==>>', error)
+    console.log('error==>>', error.message, error)
     // 异常处理
     if (error.response.data) {
       const { code, msg } = error.response.data
@@ -56,7 +52,7 @@ service.interceptors.response.use(
       //     cancelButtonText: "取消",
       //     type: "warning",
       //   }).then(() => {
-      //     const userStore = useUserStoreHook();
+      //     const userStore = useAdminStoreHook();
       //     userStore.resetToken().then(() => {
       //       location.reload();
       //     });

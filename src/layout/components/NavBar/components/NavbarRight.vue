@@ -42,13 +42,13 @@
   </div>
 </template>
 <script setup lang="ts">
-import { useAppStore, useTagsViewStore, useUserStore, useSettingsStore } from '@/store'
+import { useAppStore, useTagsViewStore, useAdminStore, useSettingsStore } from '@/store'
 import defaultSettings from '@/settings'
 import { DeviceEnum } from '@/enums/DeviceEnum'
 
 const appStore = useAppStore()
 const tagsViewStore = useTagsViewStore()
-const userStore = useUserStore()
+const userStore = useAdminStore()
 const settingStore = useSettingsStore()
 
 const route = useRoute()

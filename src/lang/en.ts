@@ -36,14 +36,14 @@ export default {
   },
   // 登录页面国际化
   login: {
-    username: 'Username',
+    phone: 'admin account',
     password: 'Password',
     login: 'Login',
     captchaCode: 'Verify Code',
     capsLock: 'Caps Lock is On',
     message: {
-      username: {
-        required: 'Please enter Username',
+      phone: {
+        required: 'Please enter admin account',
       },
       password: {
         required: 'Please enter Password',

@@ -1,8 +1,8 @@
 import router from '@/router'
 import {
-  // useUserStore,
+  // useAdminStore,
   usePermissionStore,
-  useUserStore,
+  useAdminStore,
 } from '@/store'
 import NProgress from '@/utils/nprogress'
 import type { RouteRecordRaw } from 'vue-router'
@@ -29,7 +29,7 @@ export function setupPermission() {
         next({ path: '/' })
         NProgress.done()
       } else {
-        const userStore: any = useUserStore()
+        const userStore: any = useAdminStore()
         const hasRoles = userStore.user.roles && userStore.user.roles.length > 0
         if (hasRoles) {
           // 未匹配到任何路由，跳转404

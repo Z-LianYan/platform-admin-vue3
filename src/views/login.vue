@@ -20,14 +20,14 @@
 
       <el-form ref="loginFormRef" :model="loginData" :rules="loginRules" class="login-form">
         <!-- 用户名 -->
-        <el-form-item prop="username">
+        <el-form-item prop="phone">
           <div class="flex-y-center w-full">
             <svg-icon icon-class="user" class="mx-2" />
             <el-input
-              ref="username"
-              v-model="loginData.username"
-              :placeholder="$t('login.username')"
-              name="username"
+              ref="phone"
+              v-model="loginData.phone"
+              :placeholder="$t('login.phone')"
+              name="phone"
               size="large"
               class="h-[48px]"
             />
@@ -86,25 +86,18 @@
         </el-button>
 
         <!-- 账号密码提示 -->
-        <div class="mt-10 text-sm">
-          <span>{{ $t('login.username') }}: admin</span>
+        <!-- <div class="mt-10 text-sm">
+          <span>{{ $t('login.phone') }}: admin</span>
           <span class="ml-4"> {{ $t('login.password') }}: 123456</span>
-        </div>
+        </div> -->
       </el-form>
     </el-card>
-
-    <!-- ICP备案 -->
-    <div class="absolute bottom-1 text-[10px] text-center" v-show="icpVisible">
-      <p>Copyright © 2021 - 2024 youlai.tech All Rights Reserved. 有来技术 版权所有</p>
-      <p>皖ICP备20006496号-3</p>
-    </div>
   </div>
 </template>
 
 <script setup lang="ts">
 const value1 = ref(true)
-import { useSettingsStore, useUserStore } from '@/store'
-import AuthAPI from '@/api/auth'
+import { useSettingsStore, useAdminStore } from '@/store'
 import type { LoginData } from '@/api/auth/model'
 import type { FormInstance } from 'element-plus'
 import { useRoute } from 'vue-router'
@@ -113,9 +106,8 @@ import router from '@/router'
 import defaultSettings from '@/settings'
 import { ThemeEnum } from '@/enums/ThemeEnum'
 
-// Stores
-const userStore = useUserStore()
 const settingsStore = useSettingsStore()
+const managerStore = useAdminStore()
 
 // Internationalization
 const { t } = useI18n()
@@ -130,7 +122,7 @@ const loginFormRef = ref<FormInstance>() // 登录表单ref
 const { height } = useWindowSize()
 
 const loginData = ref<LoginData>({
-  username: 'admin',
+  phone: 'admin',
   password: '123456',
   captchaKey: '',
   captchaCode: '',
@@ -138,11 +130,11 @@ const loginData = ref<LoginData>({
 
 const loginRules = computed(() => {
   return {
-    username: [
+    phone: [
       {
         required: true,
         trigger: 'blur',
-        message: t('login.message.username.required'),
+        message: t('login.message.phone.required'),
       },
     ],
     password: [
@@ -169,12 +161,9 @@ const loginRules = computed(() => {
 
 /** 获取验证码 */
 function getCaptcha() {
-  AuthAPI.getCaptcha().then((data: any) => {
-    console.log('=======', data)
+  managerStore.getCaptcha().then((data: any) => {
     loginData.value.captchaKey = data.captchaKey
     captchaBase64.value = data.captchaBase64
-
-    console.log('loginData====??', loginData.value)
   })
 }
 
@@ -184,9 +173,9 @@ function handleLogin() {
   loginFormRef.value?.validate((valid: boolean) => {
     if (valid) {
       loading.value = true
-      userStore
+      managerStore
         .login(loginData.value)
-        .then(() => {
+        .then((data) => {
           const query: LocationQuery = route.query
           const redirect = (query.redirect as LocationQueryValue) ?? '/'
           const otherQueryParams = Object.keys(query).reduce((acc: any, cur: string) => {
@@ -198,7 +187,7 @@ function handleLogin() {
           router.push({ path: redirect, query: otherQueryParams })
         })
         .catch(() => {
-          getCaptcha()
+          // getCaptcha()
         })
         .finally(() => {
           loading.value = false

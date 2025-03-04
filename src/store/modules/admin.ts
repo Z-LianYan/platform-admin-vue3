@@ -6,12 +6,31 @@ import { store } from '@/store'
 import type { LoginData } from '@/api/auth/model'
 import type { UserInfo } from '@/api/user/model'
 import { TOKEN_KEY } from '@/enums/CacheEnum'
+import request from '@/utils/request'
 
-export const useUserStore = defineStore('user', () => {
+export const useAdminStore = defineStore('user', () => {
   const user = ref<UserInfo>({
     roles: [],
     perms: [],
   })
+
+  /**
+   * 获取验证码
+   *
+   * @param {LoginData}
+   * @returns
+   */
+  function getCaptcha() {
+    return new Promise((resolve, reject) => {
+      AuthAPI.getCaptcha()
+        .then(async (data) => {
+          resolve(data)
+        })
+        .catch((error) => {
+          reject(error)
+        })
+    })
+  }
 
   /**
    * 登录
@@ -20,14 +39,17 @@ export const useUserStore = defineStore('user', () => {
    * @returns
    */
   function login(loginData: LoginData) {
+    console.log('loginData=======>>>', loginData)
     return new Promise<void>((resolve, reject) => {
       AuthAPI.login(loginData)
         .then(async (data) => {
+          console.log('loginData===>>>', loginData, data)
           const { tokenType, accessToken } = data
           localStorage.setItem(TOKEN_KEY, tokenType + ' ' + accessToken) // Bearer eyJhbGciOiJIUzI1NiJ9.xxx.xxx
           resolve()
         })
         .catch((error) => {
+          console.log('------->>', error)
           reject(error)
         })
     })
@@ -87,10 +109,11 @@ export const useUserStore = defineStore('user', () => {
     getUserInfo,
     logout,
     resetToken,
+    getCaptcha,
   }
 })
 
 // 非setup
-export function useUserStoreHook() {
-  return useUserStore(store)
+export function useAdminStoreHook() {
+  return useAdminStore(store)
 }
