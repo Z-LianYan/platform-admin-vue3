@@ -1,24 +1,24 @@
 /**
  * 登录用户信息
  */
-export interface UserInfo {
-  userId?: number;
-  username?: string;
-  nickname?: string;
-  avatar?: string;
-  roles: string[];
-  perms: string[];
+export interface AdminInfo {
+  id?: number
+  name?: string
+  phone?: string
+  avatar?: string
+  role_id?: string
+  status?: number
 }
 
 /**
  * 用户查询对象类型
  */
 export interface UserQuery extends PageQuery {
-  keywords?: string;
-  status?: number;
-  deptId?: number;
-  startTime?: string;
-  endTime?: string;
+  keywords?: string
+  status?: number
+  deptId?: number
+  startTime?: string
+  endTime?: string
 }
 
 /**
@@ -28,47 +28,47 @@ export interface UserPageVO {
   /**
    * 用户头像地址
    */
-  avatar?: string;
+  avatar?: string
   /**
    * 创建时间
    */
-  createTime?: Date;
+  createTime?: Date
   /**
    * 部门名称
    */
-  deptName?: string;
+  deptName?: string
   /**
    * 用户邮箱
    */
-  email?: string;
+  email?: string
   /**
    * 性别
    */
-  genderLabel?: string;
+  genderLabel?: string
   /**
    * 用户ID
    */
-  id?: number;
+  id?: number
   /**
    * 手机号
    */
-  mobile?: string;
+  mobile?: string
   /**
    * 用户昵称
    */
-  nickname?: string;
+  nickname?: string
   /**
    * 角色名称，多个使用英文逗号(,)分割
    */
-  roleNames?: string;
+  roleNames?: string
   /**
    * 用户状态(1:启用;0:禁用)
    */
-  status?: number;
+  status?: number
   /**
    * 用户名
    */
-  username?: string;
+  username?: string
 }
 
 /**
@@ -78,38 +78,38 @@ export interface UserForm {
   /**
    * 用户头像
    */
-  avatar?: string;
+  avatar?: string
   /**
    * 部门ID
    */
-  deptId?: number;
+  deptId?: number
   /**
    * 邮箱
    */
-  email?: string;
+  email?: string
   /**
    * 性别
    */
-  gender?: number;
+  gender?: number
   /**
    * 用户ID
    */
-  id?: number;
-  mobile?: string;
+  id?: number
+  mobile?: string
   /**
    * 昵称
    */
-  nickname?: string;
+  nickname?: string
   /**
    * 角色ID集合
    */
-  roleIds?: number[];
+  roleIds?: number[]
   /**
    * 用户状态(1:正常;0:禁用)
    */
-  status?: number;
+  status?: number
   /**
    * 用户名
    */
-  username?: string;
+  username?: string
 }

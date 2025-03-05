@@ -29,8 +29,8 @@ export function setupPermission() {
         next({ path: '/' })
         NProgress.done()
       } else {
-        const userStore: any = useAdminStore()
-        const hasRoles = userStore.user.roles && userStore.user.roles.length > 0
+        const adminStore: any = useAdminStore()
+        const hasRoles = adminStore.user.roles && adminStore.user.roles.length > 0
         if (hasRoles) {
           // 未匹配到任何路由，跳转404
           if (to.matched.length === 0) {
@@ -41,17 +41,18 @@ export function setupPermission() {
         } else {
           const permissionStore = usePermissionStore()
           try {
-            const { roles } = await userStore.getUserInfo()
+            // const { roles } = await adminStore.getAdminInfo()
             const accessRoutes = await permissionStore.generateRoutes(['ADMIN'])
+            console.log('accessRoutes====>>>', accessRoutes)
             accessRoutes.forEach((route: RouteRecordRaw) => {
               router.addRoute(route)
             })
             next({ ...to, replace: true })
           } catch (error) {
             // 移除 token 并跳转登录页
-            await userStore.resetToken()
-            next(`/login?redirect=${to.path}`)
-            NProgress.done()
+            // await adminStore.resetToken()
+            // next(`/login?redirect=${to.path}`)
+            // NProgress.done()
           }
         }
         NProgress.done()

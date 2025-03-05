@@ -1,15 +1,15 @@
 import request from '@/utils/request'
-import type { UserForm, UserInfo, UserPageVO, UserQuery } from './model'
+import type { UserForm, AdminInfo, UserPageVO, UserQuery } from './model'
 
 class UserAPI {
   /**
    * 登录成功后获取用户信息（昵称、头像、权限集合和角色集合）
    */
-  static getInfo() {
-    console.log('/api/v1/users/me')
-    return request<any, UserInfo>({
-      url: '/api/v1/users/me',
-      method: 'get',
+  static getAdminInfo() {
+    console.log('/api/v1/admin/getInfo')
+    return request<any, AdminInfo>({
+      url: '/api/v1/admin/getInfo',
+      method: 'post',
     })
   }
 

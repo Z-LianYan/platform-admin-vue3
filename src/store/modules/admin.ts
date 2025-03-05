@@ -1,18 +1,15 @@
 import AuthAPI from '@/api/auth'
-import UserAPI from '@/api/user'
+import UserAPI from '@/api/admin'
 import { resetRouter } from '@/router'
 import { store } from '@/store'
 
 import type { LoginData } from '@/api/auth/model'
-import type { UserInfo } from '@/api/user/model'
+import type { AdminInfo } from '@/api/admin/model'
 import { TOKEN_KEY } from '@/enums/CacheEnum'
 import request from '@/utils/request'
 
 export const useAdminStore = defineStore('user', () => {
-  const user = ref<UserInfo>({
-    roles: [],
-    perms: [],
-  })
+  const user = ref<AdminInfo>({})
 
   /**
    * 获取验证码
@@ -44,8 +41,8 @@ export const useAdminStore = defineStore('user', () => {
       AuthAPI.login(loginData)
         .then(async (data) => {
           console.log('loginData===>>>', loginData, data)
-          const { tokenType, accessToken } = data
-          localStorage.setItem(TOKEN_KEY, tokenType + ' ' + accessToken) // Bearer eyJhbGciOiJIUzI1NiJ9.xxx.xxx
+          const { accessToken } = data
+          localStorage.setItem(TOKEN_KEY, '' + accessToken) // Bearer eyJhbGciOiJIUzI1NiJ9.xxx.xxx
           resolve()
         })
         .catch((error) => {
@@ -56,9 +53,9 @@ export const useAdminStore = defineStore('user', () => {
   }
 
   // 获取信息(用户昵称、头像、角色集合、权限集合)
-  function getUserInfo() {
-    return new Promise<UserInfo>((resolve, reject) => {
-      UserAPI.getInfo()
+  function getAdminInfo() {
+    return new Promise<AdminInfo>((resolve, reject) => {
+      UserAPI.getAdminInfo()
         .then((data: any) => {
           console.log('data--getU', data)
           if (!data) {
@@ -66,7 +63,7 @@ export const useAdminStore = defineStore('user', () => {
             return
           }
           if (!data.roles || data.roles.length <= 0) {
-            reject('getUserInfo: roles must be a non-null array!')
+            reject('getAdminInfo: roles must be a non-null array!')
             return
           }
           Object.assign(user.value, { ...data })
@@ -106,7 +103,7 @@ export const useAdminStore = defineStore('user', () => {
   return {
     user,
     login,
-    getUserInfo,
+    getAdminInfo,
     logout,
     resetToken,
     getCaptcha,

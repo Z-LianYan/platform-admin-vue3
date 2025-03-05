@@ -2,6 +2,7 @@ import axios from 'axios'
 // import { useAdminStoreHook } from "@/store/modules/user";
 import { ResultEnum } from '@/enums/ResultEnum'
 import { ElMessage } from 'element-plus'
+import { TOKEN_KEY } from '@/enums/CacheEnum'
 // import { TOKEN_KEY } from "@/enums/CacheEnum";
 
 // 创建 axios 实例
@@ -9,7 +10,10 @@ console.log('import.meta==>>', import.meta)
 const service = axios.create({
   baseURL: import.meta.env.VITE_APP_BASE_API,
   timeout: 50000,
-  headers: { 'Content-Type': 'application/json;charset=utf-8' },
+  headers: {
+    'Content-Type': 'application/json;charset=utf-8',
+    accessToken: localStorage.getItem(TOKEN_KEY),
+  },
 })
 
 // 请求拦截器

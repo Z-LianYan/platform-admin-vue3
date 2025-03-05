@@ -24,6 +24,8 @@
           <div class="flex-y-center w-full">
             <svg-icon icon-class="user" class="mx-2" />
             <el-input
+              type="tel"
+              maxlength="11"
               ref="phone"
               v-model="loginData.phone"
               :placeholder="$t('login.phone')"
@@ -122,7 +124,7 @@ const loginFormRef = ref<FormInstance>() // 登录表单ref
 const { height } = useWindowSize()
 
 const loginData = ref<LoginData>({
-  phone: 'admin',
+  phone: '13536681616',
   password: '123456',
   captchaKey: '',
   captchaCode: '',
@@ -187,7 +189,7 @@ function handleLogin() {
           router.push({ path: redirect, query: otherQueryParams })
         })
         .catch(() => {
-          // getCaptcha()
+          getCaptcha()
         })
         .finally(() => {
           loading.value = false
