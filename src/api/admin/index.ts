@@ -6,7 +6,6 @@ class UserAPI {
    * 登录成功后获取用户信息（昵称、头像、权限集合和角色集合）
    */
   static getAdminInfo() {
-    console.log('/api/v1/admin/getInfo')
     return request<any, AdminInfo>({
       url: '/api/v1/admin/getInfo',
       method: 'post',

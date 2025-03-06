@@ -7,7 +7,7 @@ import {
 import NProgress from '@/utils/nprogress'
 import type { RouteRecordRaw } from 'vue-router'
 import { TOKEN_KEY } from '@/enums/CacheEnum'
-
+import { constantRoutes } from '@/router'
 export function setupPermission() {
   // 白名单路由
   const whiteList = ['/login']
@@ -30,7 +30,7 @@ export function setupPermission() {
         NProgress.done()
       } else {
         const adminStore: any = useAdminStore()
-        const hasRoles = adminStore.user.roles && adminStore.user.roles.length > 0
+        const hasRoles = adminStore.admin.roles && adminStore.admin.roles.length > 0
         if (hasRoles) {
           // 未匹配到任何路由，跳转404
           if (to.matched.length === 0) {
@@ -41,14 +41,19 @@ export function setupPermission() {
         } else {
           const permissionStore = usePermissionStore()
           try {
-            // const { roles } = await adminStore.getAdminInfo()
+            const { roles } = await adminStore.getAdminInfo()
+            // console.log('1111', to)
             const accessRoutes = await permissionStore.generateRoutes(['ADMIN'])
-            console.log('accessRoutes====>>>', accessRoutes)
-            accessRoutes.forEach((route: RouteRecordRaw) => {
-              router.addRoute(route)
-            })
-            next({ ...to, replace: true })
-          } catch (error) {
+            // console.log('accessRoutes====>>>', accessRoutes)
+            // accessRoutes.forEach((route: RouteRecordRaw) => {
+            //   console.log('======>>>', route)
+            //   router.addRoute(route)
+            // })
+
+            // next({ ...to, replace: true })
+            next()
+          } catch (error: any) {
+            console.log('报错了', error.message)
             // 移除 token 并跳转登录页
             // await adminStore.resetToken()
             // next(`/login?redirect=${to.path}`)

@@ -33,6 +33,7 @@ export default defineConfig(({ mode, command, isSsrBuild, isPreview }: ConfigEnv
   // mode: development
   // process.cwd(): /Users/lyz/Desktop/test/platform-admin-vue3
   const env = loadEnv(mode, process.cwd())
+  console.log('env========>', env)
   return {
     base: './',
     plugins: [
@@ -95,16 +96,16 @@ export default defineConfig(({ mode, command, isSsrBuild, isPreview }: ConfigEnv
       // 允许IP访问
       host: '0.0.0.0',
       // 应用端口 (默认:3000)
-      port: Number(env.VITE_APP_PORT),
+      port: +env.VITE_APP_PORT,
       // 运行是否自动打开浏览器
       open: true,
       proxy: {
         /** 代理前缀为 /dev-api 的请求  */
         [env.VITE_APP_BASE_API]: {
-          changeOrigin: false,
+          changeOrigin: false, // 是否改变源地址
           // 接口地址
-          target: env.VITE_APP_API_URL,
-          rewrite: (path) => path.replace(new RegExp('^' + env.VITE_APP_BASE_API), ''),
+          target: env.VITE_APP_API_URL, // 目标服务器地址
+          rewrite: (path) => path.replace(new RegExp('^' + env.VITE_APP_BASE_API), ''), // 重写路径
         },
       },
     },

@@ -3,7 +3,7 @@
     <!-- 顶部 -->
     <div class="absolute-lt flex-x-end p-3 w-full">
       <el-switch
-        v-model="isDark"
+        v-model="isDark as any"
         inline-prompt
         active-icon="Moon"
         inactive-icon="Sunny"
@@ -109,7 +109,7 @@ import defaultSettings from '@/settings'
 import { ThemeEnum } from '@/enums/ThemeEnum'
 
 const settingsStore = useSettingsStore()
-const managerStore = useAdminStore()
+const adminStore = useAdminStore()
 
 // Internationalization
 const { t } = useI18n()
@@ -163,7 +163,7 @@ const loginRules = computed(() => {
 
 /** 获取验证码 */
 function getCaptcha() {
-  managerStore.getCaptcha().then((data: any) => {
+  adminStore.getCaptcha().then((data: any) => {
     loginData.value.captchaKey = data.captchaKey
     captchaBase64.value = data.captchaBase64
   })
@@ -175,7 +175,7 @@ function handleLogin() {
   loginFormRef.value?.validate((valid: boolean) => {
     if (valid) {
       loading.value = true
-      managerStore
+      adminStore
         .login(loginData.value)
         .then((data) => {
           const query: LocationQuery = route.query

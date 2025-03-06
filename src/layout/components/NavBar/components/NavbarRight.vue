@@ -19,10 +19,10 @@
     <el-dropdown class="setting-item" trigger="click">
       <div class="flex-center h100% p10px">
         <img
-          :src="userStore.user.avatar + '?imageView2/1/w/80/h/80'"
+          :src="adminStore.admin.avatar + '?imageView2/1/w/80/h/80'"
           class="rounded-full mr-10px w24px w24px"
         />
-        <span>{{ userStore.user.username }}</span>
+        <span>{{ adminStore.admin.name }}</span>
       </div>
       <template #dropdown>
         <el-dropdown-menu>
@@ -48,7 +48,7 @@ import { DeviceEnum } from '@/enums/DeviceEnum'
 
 const appStore = useAppStore()
 const tagsViewStore = useTagsViewStore()
-const userStore = useAdminStore()
+const adminStore = useAdminStore()
 const settingStore = useSettingsStore()
 
 const route = useRoute()
@@ -68,7 +68,7 @@ function logout() {
     type: 'warning',
     lockScroll: false,
   }).then(() => {
-    userStore
+    adminStore
       .logout()
       .then(() => {
         tagsViewStore.delAllViews()

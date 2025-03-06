@@ -6,7 +6,8 @@ import type { RouteVO } from '@/api/menu/model'
 
 const modules = (import.meta as any).glob('../../views/**/**.vue')
 const Layout = () => import('@/layout/index.vue')
-
+const Home = () => import('@/views/Home.vue')
+const Home1 = () => import('@/views/Home1.vue')
 /**
  * Use meta.role to determine if the current user has permission
  *
@@ -82,16 +83,19 @@ export const usePermissionStore = defineStore('permission', () => {
   function generateRoutes(roles: string[]) {
     return new Promise<RouteRecordRaw[]>((resolve, reject) => {
       // 接口获取所有路由
-      MenuAPI.getRoutes()
-        .then((data: any) => {
-          // 过滤有权限的动态路由
-          const accessedRoutes = filterAsyncRoutes(data, roles)
-          setRoutes(accessedRoutes)
-          resolve(accessedRoutes)
-        })
-        .catch((error) => {
-          reject(error)
-        })
+      // MenuAPI.getRoutes()
+      //   .then((data: any) => {
+      //     // 过滤有权限的动态路由
+      //     const accessedRoutes = filterAsyncRoutes(data, roles)
+      //     setRoutes(accessedRoutes)
+      //     resolve(accessedRoutes)
+      //   })
+      //   .catch((error) => {
+      //     reject(error)
+      //   })
+
+      setRoutes([])
+      resolve([])
     })
   }
 

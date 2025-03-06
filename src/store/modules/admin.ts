@@ -1,5 +1,5 @@
 import AuthAPI from '@/api/auth'
-import UserAPI from '@/api/admin'
+import AdminAPI from '@/api/admin'
 import { resetRouter } from '@/router'
 import { store } from '@/store'
 
@@ -7,9 +7,10 @@ import type { LoginData } from '@/api/auth/model'
 import type { AdminInfo } from '@/api/admin/model'
 import { TOKEN_KEY } from '@/enums/CacheEnum'
 import request from '@/utils/request'
+import { settings } from 'nprogress'
 
 export const useAdminStore = defineStore('user', () => {
-  const user = ref<AdminInfo>({})
+  const admin = ref<AdminInfo>({})
 
   /**
    * 获取验证码
@@ -36,17 +37,14 @@ export const useAdminStore = defineStore('user', () => {
    * @returns
    */
   function login(loginData: LoginData) {
-    console.log('loginData=======>>>', loginData)
     return new Promise<void>((resolve, reject) => {
       AuthAPI.login(loginData)
         .then(async (data) => {
-          console.log('loginData===>>>', loginData, data)
           const { accessToken } = data
           localStorage.setItem(TOKEN_KEY, '' + accessToken) // Bearer eyJhbGciOiJIUzI1NiJ9.xxx.xxx
           resolve()
         })
         .catch((error) => {
-          console.log('------->>', error)
           reject(error)
         })
     })
@@ -55,21 +53,23 @@ export const useAdminStore = defineStore('user', () => {
   // 获取信息(用户昵称、头像、角色集合、权限集合)
   function getAdminInfo() {
     return new Promise<AdminInfo>((resolve, reject) => {
-      UserAPI.getAdminInfo()
+      AdminAPI.getAdminInfo()
         .then((data: any) => {
-          console.log('data--getU', data)
+          console.log('getAdminInfo=======>>>getAdminInfo', data)
           if (!data) {
             reject('Verification failed, please Login again.')
             return
           }
-          if (!data.roles || data.roles.length <= 0) {
-            reject('getAdminInfo: roles must be a non-null array!')
-            return
-          }
-          Object.assign(user.value, { ...data })
+          // if (!data.roles || data.roles.length <= 0) {
+          //   console.log('+++')
+          //   reject('getAdminInfo: roles must be a non-null array!')
+          //   return
+          // }
+          Object.assign(admin.value, { ...data })
           resolve(data)
         })
         .catch((error) => {
+          console.log('出错误了', error.message)
           reject(error)
         })
     })
@@ -92,7 +92,6 @@ export const useAdminStore = defineStore('user', () => {
 
   // remove token
   function resetToken() {
-    console.log('resetToken')
     return new Promise<void>((resolve) => {
       localStorage.setItem(TOKEN_KEY, '')
       resetRouter()
@@ -101,7 +100,7 @@ export const useAdminStore = defineStore('user', () => {
   }
 
   return {
-    user,
+    admin,
     login,
     getAdminInfo,
     logout,
