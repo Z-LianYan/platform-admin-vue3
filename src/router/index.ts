@@ -31,6 +31,7 @@ export const constantRoutes: RouteRecordRaw[] = [
           alwaysShow: false,
           keepAlive: true,
           affix: true,
+          icon: '',
         },
         // redirect:"/home/test",
         children: [
@@ -71,6 +72,7 @@ export const constantRoutes: RouteRecordRaw[] = [
           roles: ['ADMIN'],
           alwaysShow: false,
           keepAlive: true,
+          icon: '',
         },
         children: [],
       },
@@ -84,6 +86,7 @@ export const constantRoutes: RouteRecordRaw[] = [
           roles: ['ADMIN'],
           alwaysShow: false,
           hidden: false,
+          icon: '',
         },
       },
     ],

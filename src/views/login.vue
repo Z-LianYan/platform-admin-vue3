@@ -3,7 +3,7 @@
     <!-- 顶部 -->
     <div class="absolute-lt flex-x-end p-3 w-full">
       <el-switch
-        v-model="isDark as any"
+        v-model="isDark"
         inline-prompt
         active-icon="Moon"
         inactive-icon="Sunny"

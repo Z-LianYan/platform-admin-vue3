@@ -3,12 +3,7 @@
     <el-divider>{{ $t('settings.theme') }}</el-divider>
 
     <div class="flex-center">
-      <el-switch
-        v-model="isDark as any"
-        active-icon="Moon"
-        inactive-icon="Sunny"
-        @change="changeTheme"
-      />
+      <el-switch v-model="isDark" active-icon="Moon" inactive-icon="Sunny" @change="changeTheme" />
     </div>
 
     <el-divider>{{ $t('settings.interface') }}</el-divider>
