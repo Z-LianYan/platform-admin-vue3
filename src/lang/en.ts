@@ -33,6 +33,7 @@ export default {
     fixedHeader: 'Fixed Header',
     sidebarLogo: 'Sidebar Logo',
     watermark: 'Watermark',
+    language: 'Language',
   },
   // 登录页面国际化
   login: {

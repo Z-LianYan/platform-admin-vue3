@@ -6,6 +6,12 @@
       <el-switch v-model="isDark" active-icon="Moon" inactive-icon="Sunny" @change="changeTheme" />
     </div>
 
+    <el-divider>{{ $t('settings.language') }}</el-divider>
+    <div class="flex-center">
+      <!-- 语言选择 -->
+      <lang-select class="setting-item" />
+    </div>
+
     <el-divider>{{ $t('settings.interface') }}</el-divider>
 
     <div class="settings-option">

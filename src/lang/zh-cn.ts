@@ -33,6 +33,7 @@ export default {
     fixedHeader: '固定 Header',
     sidebarLogo: '侧边栏 Logo',
     watermark: '开启水印',
+    language: '语言设置',
   },
   // 登录页面国际化
   login: {

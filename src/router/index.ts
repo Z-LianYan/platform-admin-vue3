@@ -12,14 +12,16 @@ import Test3 from '@/views/Test3.vue'
 // 静态路由
 export const constantRoutes: RouteRecordRaw[] = [
   {
-    path: '/',
+    path: '/test',
     name: 'Layout',
     component: Layout,
     meta: {
       title: 'Layout布局',
       roles: ['ADMIN'],
       alwaysShow: true,
+      icon: 'iconfont icon-qingjia',
     },
+    redirect: '/test/home',
     children: [
       {
         path: 'home',
@@ -31,7 +33,7 @@ export const constantRoutes: RouteRecordRaw[] = [
           alwaysShow: false,
           keepAlive: true,
           affix: true,
-          icon: '',
+          icon: 'el-icon-edit',
         },
         // redirect:"/home/test",
         children: [
@@ -117,7 +119,7 @@ export const constantRoutes: RouteRecordRaw[] = [
   {
     path: '/login',
     component: () => import('@/views/login.vue'),
-    meta: { hidden: true },
+    meta: { hidden: true, icon: '' },
   },
 
   // {
@@ -209,6 +211,7 @@ export const constantRoutes: RouteRecordRaw[] = [
     path: '/:pathMatch(.*)*',
     name: 'NotFound',
     component: () => import('@/views/error-page/404.vue'),
+    meta: { hidden: true, icon: '' },
   },
 
   // 将匹配以 `/user-` 开头的所有内容，并将其放在 `route.params.afterUser` 下

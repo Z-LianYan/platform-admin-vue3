@@ -8,6 +8,7 @@
     :active-text-color="variables['menu-active-text']"
     :unique-opened="false"
     :collapse-transition="false"
+    :ellipsis="true"
     :mode="layout === 'top' ? 'horizontal' : 'vertical'"
   >
     <SidebarMenuItem
@@ -17,7 +18,7 @@
       :base-path="resolvePath(route.path)"
       :is-collapse="!appStore.sidebar.opened"
     />
-    
+
   </el-menu>
 </template>
 

@@ -11,13 +11,20 @@
     >
       <el-menu-item v-for="route in mixTopMenus" :key="route.path" :index="route.path">
         <template #title>
-          <svg-icon v-if="route.meta && route.meta.icon" :icon-class="route.meta?.icon" />
-          <span v-if="route.path === '/'"> 首页 </span>
-          <template v-else>
-            <span v-if="route.meta && route.meta.title" class="ml-1">
-              {{ translateRouteTitle(route.name, route.meta.title) }}
-            </span>
+          <template v-if="route.meta && route.meta.icon">
+            <el-icon v-if="(route.meta.icon as string).startsWith('el-icon')" class="sub-el-icon">
+              <component :is="(route.meta.icon as string).replace('el-icon-', '')" />
+            </el-icon>
+            <i v-else-if="(route.meta.icon as string).startsWith('iconfont')" :class="route.meta.icon"></i>
+            <svg-icon
+              v-else-if="route.meta && route.meta.icon"
+              :iconClass="(route.meta?.icon as string)"
+            />
           </template>
+          <span v-if="route.path === '/'">首页</span>
+          <span v-else-if="route.meta && route.meta.title" class="ml-1">
+            {{ translateRouteTitle(route.name, route.meta.title) }}
+          </span>
         </template>
       </el-menu-item>
     </el-menu>

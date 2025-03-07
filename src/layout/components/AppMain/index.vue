@@ -16,8 +16,6 @@
       <component :is="Component" :key="route.path+Math.random()" />
     </keep-alive> -->
 
-    <div>{{ JSON.stringify(cachedViews) }}</div>
-    
   </section>
 </template>
 
