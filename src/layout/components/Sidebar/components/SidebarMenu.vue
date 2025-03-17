@@ -18,25 +18,24 @@
       :base-path="resolvePath(route.path)"
       :is-collapse="!appStore.sidebar.opened"
     />
-
   </el-menu>
 </template>
 
 <script lang="ts" setup>
-import { useSettingsStore, useAppStore, usePermissionStore } from "@/store";
-import { isExternal } from "@/utils/index";
-import path from "path-browserify";
-import variables from "@/styles/variables.module.scss";
+import { useSettingsStore, useAppStore, usePermissionStore } from '@/store'
+import { isExternal } from '@/utils/index'
+import path from 'path-browserify'
+import variables from '@/styles/variables.module.scss'
 
-const settingsStore = useSettingsStore();
-const appStore = useAppStore();
-const currentRoute = useRoute();
-const layout = computed(() => settingsStore.layout);
+const settingsStore = useSettingsStore()
+const appStore = useAppStore()
+const currentRoute = useRoute()
+const layout = computed(() => settingsStore.layout)
 const props = defineProps({
   menuList: {
     required: true,
     default: () => {
-      return [];
+      return []
     },
     type: Array<any>,
   },
@@ -44,8 +43,7 @@ const props = defineProps({
     type: String,
     required: true,
   },
-});
-console.log('menuList===>>props--哈哈', props.menuList)
+})
 /**
  * 解析路径
  *
@@ -53,22 +51,21 @@ console.log('menuList===>>props--哈哈', props.menuList)
  */
 function resolvePath(routePath: string) {
   if (isExternal(routePath)) {
-    return routePath;
+    return routePath
   }
   if (isExternal(props.basePath)) {
-    return props.basePath;
+    return props.basePath
   }
 
   // 完整绝对路径 = 父级路径(/system) + 路由路径(/user)
-  const fullPath = path.resolve(props.basePath, routePath);
-  return fullPath;
+  const fullPath = path.resolve(props.basePath, routePath)
+  return fullPath
 }
-const permissionStore = usePermissionStore();
-onMounted(()=>{
+const permissionStore = usePermissionStore()
+onMounted(() => {
   // permissionStore.generateRoutes(["ADMIN"]).then((res:any)=>{
   //   console.log('res===>>permissionStore',res);
   //   menu_list.value = res;
   // });
-  console.log('permissionStore.routes===---00--',permissionStore.routes)
 })
 </script>

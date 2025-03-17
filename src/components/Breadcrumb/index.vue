@@ -40,7 +40,6 @@ function getBreadcrumb() {
   breadcrumbs.value = matched.filter((item) => {
     return item.meta && item.meta.title && item.meta.breadcrumb !== false
   })
-  console.log('breadcrumbs=======>>>', breadcrumbs.value)
 }
 
 function isDashboard(route: RouteLocationMatched) {

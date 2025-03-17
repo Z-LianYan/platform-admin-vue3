@@ -2,14 +2,13 @@
   <el-icon v-if="icon && icon.startsWith('el-icon')" class="sub-el-icon">
     <component :is="icon.replace('el-icon-', '')" />
   </el-icon>
-  <i v-else-if="icon.startsWith('iconfont')" :class="icon"></i>
+  <i v-else-if="icon.startsWith('iconfont')" :class="[icon, 'sub-el-icon']"></i>
   <svg-icon v-else-if="icon" :icon-class="icon" />
   <svg-icon v-else icon-class="menu" />
   <span v-if="title" class="ml-1">{{ title }}</span>
 </template>
 
 <script setup lang="ts">
-
 const props = defineProps({
   icon: {
     type: String,

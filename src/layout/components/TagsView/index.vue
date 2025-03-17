@@ -12,9 +12,9 @@
       >
         {{ translateRouteTitle(tag.name, tag.title) }}
         <svg-icon
-        icon-class="close"
-        v-if="!isAffix(tag)"
-        @click.prevent.stop="closeSelectedTag(tag)"
+          icon-class="close"
+          v-if="!isAffix(tag)"
+          @click.prevent.stop="closeSelectedTag(tag)"
         />
         <!-- <i-ep-close
           class="close-icon"
@@ -76,7 +76,6 @@ const tagsViewStore = useTagsViewStore()
 const appStore = useAppStore()
 
 const { visitedViews } = storeToRefs(tagsViewStore)
-console.log('visitedViews===>>', visitedViews.value)
 const settingsStore = useSettingsStore()
 const layout = computed(() => settingsStore.layout)
 
@@ -96,7 +95,6 @@ const top = ref(0)
 watch(
   route,
   () => {
-    console.log("visitedViews=======>>>",visitedViews.value)
     addTags()
     moveToCurrentTag()
   },

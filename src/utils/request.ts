@@ -6,7 +6,6 @@ import { TOKEN_KEY } from '@/enums/CacheEnum'
 import { useAdminStoreHook } from '@/store'
 
 // 创建 axios 实例
-console.log('import.meta==>>', import.meta, localStorage.getItem(TOKEN_KEY))
 const service = axios.create({
   baseURL: import.meta.env.VITE_APP_BASE_API,
   timeout: 50000,

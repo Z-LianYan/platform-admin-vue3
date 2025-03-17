@@ -55,7 +55,6 @@ export const useAdminStore = defineStore('user', () => {
     return new Promise<AdminInfo>((resolve, reject) => {
       AdminAPI.getAdminInfo()
         .then((data: any) => {
-          console.log('getAdminInfo=======>>>getAdminInfo', data)
           if (!data) {
             reject('Verification failed, please Login again.')
             return

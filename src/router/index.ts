@@ -12,8 +12,15 @@ import Test3 from '@/views/Test3.vue'
 // 静态路由
 export const constantRoutes: RouteRecordRaw[] = [
   {
+    path: '/',
+    name: 'Home111',
+    component: Layout,
+    children: [],
+    redirect: '/system/menu',
+  },
+  {
     path: '/test',
-    name: 'Layout',
+    name: 'Test',
     component: Layout,
     meta: {
       title: 'Layout布局',
@@ -93,6 +100,59 @@ export const constantRoutes: RouteRecordRaw[] = [
       },
     ],
   },
+
+  {
+    path: '/system',
+    name: 'System',
+    component: Layout,
+    meta: {
+      title: '系统设置',
+      alwaysShow: true,
+      icon: 'iconfont icon-qingjia',
+    },
+    redirect: '/system/menu',
+    children: [
+      {
+        path: 'menu',
+        name: 'Menu',
+        component: () => import('@/views/system/menu/index.vue'),
+        meta: {
+          title: '菜单',
+          alwaysShow: false,
+          keepAlive: true,
+          affix: true,
+          icon: 'el-icon-edit',
+        },
+        // redirect:"/home/test",
+        children: [],
+      },
+      {
+        path: 'admin',
+        name: 'Admin',
+        component: () => import('@/views/system/admin/index.vue'),
+        meta: {
+          title: '管理员',
+          alwaysShow: false,
+          keepAlive: true,
+          icon: '',
+        },
+        children: [],
+      },
+      {
+        path: 'role',
+        name: 'Role',
+        component: () => import('@/views/system/role/index.vue'),
+        meta: {
+          title: '角色管理',
+          alwaysShow: false,
+          keepAlive: true,
+          icon: '',
+        },
+        children: [],
+      },
+    ],
+  },
+
   // {
   //   path: '/',
   //   name: 'Layout',
@@ -215,7 +275,7 @@ export const constantRoutes: RouteRecordRaw[] = [
   },
 
   // 将匹配以 `/user-` 开头的所有内容，并将其放在 `route.params.afterUser` 下
-  // { path: '/user-:afterUser(.*)', component: UserGeneric },
+  // { path: '/system:afterUser(.*)', component: () => import('@/views/error-page/404.vue') },
 ]
 
 /**
