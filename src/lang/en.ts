@@ -1,13 +1,22 @@
 export default {
-  route: {
-    Home: 'Home',
+  common: {
+    tip: 'tip',
+    logout: {
+      btn: 'Logout',
+      dialog_tip_describe: 'Are you sure to log out and exit the system?',
+    },
+    sure: 'Sure',
+    cancel: 'Cancel',
+    system_name: 'Shou Qian Bao Backend',
+    edit: 'Edit',
+    add: 'Add',
+    del: 'delete',
   },
-  // 导航栏国际化
-  navbar: {
-    dashboard: 'Dashboard',
-    logout: 'Logout',
-    document: 'Document',
-    gitee: 'Gitee',
+  route: {
+    System: 'System set',
+    Menu: 'Menu',
+    Admin: 'Admin',
+    Role: 'Role',
   },
   sizeSelect: {
     tooltip: 'Layout Size',
@@ -52,6 +61,39 @@ export default {
       },
       captchaCode: {
         required: 'Please enter Verify Code',
+      },
+    },
+  },
+  menuPage: {
+    menuTitle: 'Menu Title',
+    routeName: 'Route Name',
+    routePath: 'Route Path',
+    component: 'Component',
+    redirect: 'Redirect Route',
+    status: 'Status',
+    sort: 'Sort',
+    message: {
+      title: {
+        required: 'Please input menu title',
+        limit: 'Length should be 1 to 20',
+      },
+      name: {
+        required: 'Please input route name',
+      },
+      path: {
+        required: 'Please input route path',
+      },
+      component: {
+        required: 'Please input component path',
+      },
+      redirect: {
+        required: 'Please input route redirect',
+      },
+      status: {
+        required: 'Please select the status',
+      },
+      sort: {
+        required: 'Please input sort',
       },
     },
   },

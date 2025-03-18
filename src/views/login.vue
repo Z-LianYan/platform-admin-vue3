@@ -14,7 +14,7 @@
     <!-- 登录表单 -->
     <el-card class="!border-none !bg-transparent !rounded-4% w-100 <sm:w-85">
       <div class="text-center relative">
-        <h2>{{ defaultSettings.title }}</h2>
+        <h2>{{ showSystemName() }}</h2>
         <el-tag class="ml-2 absolute-rt">{{ defaultSettings.version }}</el-tag>
       </div>
 
@@ -112,7 +112,7 @@ const settingsStore = useSettingsStore()
 const adminStore = useAdminStore()
 
 // Internationalization
-const { t } = useI18n()
+const { t, te } = useI18n()
 
 // Reactive states
 const isDark = ref(settingsStore.theme === ThemeEnum.DARK)
@@ -160,7 +160,15 @@ const loginRules = computed(() => {
     ],
   }
 })
-
+function showSystemName() {
+  // 判断是否存在国际化配置，如果没有原生返回
+  const hasKey = te('common.system_name')
+  if (hasKey) {
+    const translatedTitle = t('common.system_name')
+    return translatedTitle
+  }
+  return defaultSettings.title || ''
+}
 /** 获取验证码 */
 function getCaptcha() {
   adminStore.getCaptcha().then((data: any) => {

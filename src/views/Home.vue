@@ -23,7 +23,7 @@
     :shortcuts="shortcuts"
   />
 
-  <p>语言：{{ $t('navbar.logout') }}</p>
+  <p>语言：{{ $t('common.logout') }}</p>
   <h3>切换语言</h3>
   <el-button @click="onChangeLanguageZh">中文</el-button>
   <el-button @click="onChangeLanguageEn">英文</el-button>

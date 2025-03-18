@@ -27,7 +27,7 @@
       <template #dropdown>
         <el-dropdown-menu>
           <el-dropdown-item @click="logout">
-            {{ $t('navbar.logout') }}
+            {{ $t('common.logout.btn') }}
           </el-dropdown-item>
         </el-dropdown-menu>
       </template>
@@ -45,7 +45,7 @@
 import { useAppStore, useTagsViewStore, useAdminStore, useSettingsStore } from '@/store'
 import defaultSettings from '@/settings'
 import { DeviceEnum } from '@/enums/DeviceEnum'
-
+const { locale, t } = useI18n()
 const appStore = useAppStore()
 const tagsViewStore = useTagsViewStore()
 const adminStore = useAdminStore()
@@ -62,9 +62,11 @@ const { isFullscreen, toggle } = useFullscreen()
  * 注销
  */
 function logout() {
-  ElMessageBox.confirm('确定注销并退出系统吗？', '提示', {
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
+  // i18n.global.t('route.' + name)
+  // '确定注销并退出系统吗？'
+  ElMessageBox.confirm(t('common.logout.dialog_tip_describe'), t('common.tip'), {
+    confirmButtonText: t('common.sure'),
+    cancelButtonText: t('common.cancel'),
     type: 'warning',
     lockScroll: false,
   }).then(() => {

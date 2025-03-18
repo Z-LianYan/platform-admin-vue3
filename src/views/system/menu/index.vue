@@ -1,49 +1,62 @@
 <template>
   <el-card class="card-margin">
-    <el-table :data="tableData" :border="true" stripe style="width: 100%">
-      <el-table-column prop="title" label="菜单名称" width="180">
-        <template #default="scope">{{ scope.row.meta.title }}</template>
+    <el-table
+      :data="tableData"
+      :border="true"
+      stripe
+      style="width: 100%"
+      row-key="id"
+      default-expand-all
+      :tree-props="{ children: 'children' }"
+    >
+      <el-table-column prop="title" :label="$t('menuPage.menuTitle')" width="180">
+        <template #default="scope">{{
+          translateRouteTitle(scope.row.name, scope.row.meta.title)
+        }}</template>
       </el-table-column>
-      <el-table-column prop="address" label="路由名称">
+      <el-table-column prop="address" :label="$t('menuPage.routeName')">
         <template #default="scope">{{ scope.row.name }}</template>
       </el-table-column>
-      <el-table-column prop="path" label="路由路径" width="180" />
-      <el-table-column prop="component" label="组件" width="180" />
+      <el-table-column prop="path" :label="$t('menuPage.routePath')" width="180" />
+      <el-table-column prop="component" :label="$t('menuPage.component')" width="180" />
 
-      <el-table-column prop="redirect" label="重定向">
+      <el-table-column prop="redirect" :label="$t('menuPage.redirect')">
         <template #default="scope">{{ scope.row.redirect }}</template>
       </el-table-column>
+      <el-table-column prop="status_name" :label="$t('menuPage.status')" width="180" />
+      <el-table-column prop="sort" :label="$t('menuPage.sort')" width="180" />
 
-      <el-table-column prop="sort" label="排序" width="180" />
-      <el-table-column prop="status" label="状态" width="180" />
-
-      <el-table-column prop="" label="操作">
+      <el-table-column prop="" label="操作" width="110px">
         <template #default="scope">
-          <el-button type="text" size="small" icon="Plus">新增</el-button>
-          <el-button type="text" size="small" icon="Edit">编辑</el-button>
-          <el-button type="danger" size="small" link icon="Delete">删除</el-button>
-          <!-- <el-dropdown size="small">
-            <el-button type="primary">
-              操作菜单<el-icon class="el-icon--right"><arrow-down /></el-icon>
+          <el-dropdown size="default" type="primary" @command="handleDropdownClick">
+            <el-button type="primary" size="small" icon="Setting">
+              操作<el-icon class="el-icon--right"><arrow-down /></el-icon>
             </el-button>
             <template #dropdown>
               <el-dropdown-menu>
-                <el-dropdown-item>Action 1</el-dropdown-item>
-                <el-dropdown-item>Action 2</el-dropdown-item>
-                <el-dropdown-item>Action 3</el-dropdown-item>
-                <el-dropdown-item>Action 4</el-dropdown-item>
-                <el-dropdown-item>Action 5</el-dropdown-item>
+                <el-dropdown-item icon="Plus" command="add">{{
+                  $t('common.add')
+                }}</el-dropdown-item>
+                <el-dropdown-item icon="Edit" command="edit">{{
+                  $t('common.edit')
+                }}</el-dropdown-item>
+                <el-dropdown-item icon="Delete" command="del">{{
+                  $t('common.del')
+                }}</el-dropdown-item>
               </el-dropdown-menu>
             </template>
-          </el-dropdown> -->
+          </el-dropdown>
         </template>
       </el-table-column>
     </el-table>
   </el-card>
+
+  <AddEdit ref="addEdit" />
 </template>
 <script setup lang="ts">
+import { translateRouteTitle } from '@/utils/i18n'
 import { useMenuStore } from '@/store'
-
+import AddEdit from './AddEdit.vue'
 defineOptions({
   name: 'Menu',
   inheritAttrs: false, //控制是否继承父组件传递过来的属性
@@ -52,7 +65,6 @@ const useMenu = useMenuStore()
 
 const tableData = reactive([])
 const getMenu = async function () {
-  console.log('12345')
   const result: any = await useMenu.getMenu({})
   console.log('=======>>>', result)
   Object.assign(tableData, result.rows)
@@ -60,6 +72,15 @@ const getMenu = async function () {
 onMounted(() => {
   getMenu()
 })
+
+const addEdit: any = ref(null)
+function handleDropdownClick(val: any) {
+  if (['add', 'edit'].includes(val)) {
+    addEdit.value.open(val)
+  } else if (['del'].includes(val)) {
+    console.log('删除')
+  }
+}
 </script>
 
 <style scoped lang="scss"></style>
