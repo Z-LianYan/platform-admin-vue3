@@ -51,7 +51,7 @@
     </el-table>
   </el-card>
 
-  <AddEdit ref="addEdit" />
+  <AddEdit ref="addEdit" :menu="tableData" />
 </template>
 <script setup lang="ts">
 import { translateRouteTitle } from '@/utils/i18n'
@@ -63,7 +63,7 @@ defineOptions({
 })
 const useMenu = useMenuStore()
 
-const tableData = reactive([])
+const tableData = reactive<any[]>([])
 const getMenu = async function () {
   const result: any = await useMenu.getMenu({})
   console.log('=======>>>', result)

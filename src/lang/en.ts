@@ -10,7 +10,13 @@ export default {
     system_name: 'Shou Qian Bao Backend',
     edit: 'Edit',
     add: 'Add',
-    del: 'delete',
+    del: 'Delete',
+    yes: 'Yes',
+    no: 'No',
+    normal: 'Normal',
+    disable: ' Disable',
+    submit: 'Submit',
+    reset: 'Reset',
   },
   route: {
     System: 'System set',
@@ -68,11 +74,27 @@ export default {
     menuTitle: 'Menu Title',
     routeName: 'Route Name',
     routePath: 'Route Path',
+    routePathTip:
+      'If it is a sub route, it cannot be added before/for example:/ How to write childrenRouter sub route errors',
     component: 'Component',
+    componentTip:
+      'The first level route is Layout. If there are sub routes for routes above the first level, their component paths are noComponent',
     redirect: 'Redirect Route',
     status: 'Status',
     sort: 'Sort',
+    hidden: 'Hidden',
+    alwaysShow: 'Always Show',
+    alwaysShowTip: 'Does the parent menu always display when there is only one sub route',
+    keepAlive: 'Cache',
+    icon: 'Icon',
+    affix: 'Affix',
+    affixTip:
+      'Explanation: TagsView preview history menu shows menus that have not been previewed before by default and cannot be closed',
+    pid: 'Belonging Menu',
     message: {
+      pid: {
+        required: 'Please select the belonging menu',
+      },
       title: {
         required: 'Please input menu title',
         limit: 'Length should be 1 to 20',
@@ -94,6 +116,21 @@ export default {
       },
       sort: {
         required: 'Please input sort',
+      },
+      hidden: {
+        required: 'Please choose whether to hide or not',
+      },
+      alwaysShow: {
+        required: 'Please choose whether to always show or not',
+      },
+      keepAlive: {
+        required: 'Please choose whether to cache or not',
+      },
+      icon: {
+        required: 'Please input icon',
+      },
+      affix: {
+        required: 'Please choose whether to attach or not',
       },
     },
   },
