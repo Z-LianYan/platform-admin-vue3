@@ -24,6 +24,32 @@ class MenuAPI {
       data: queryParams,
     })
   }
+
+  /**
+   * 添加菜单
+   *
+   * @param body
+   */
+  static addMenu(body: MenuQuery) {
+    return request<any, MenuVO[]>({
+      url: '/api/v1/menu/add',
+      method: 'post',
+      data: body,
+    })
+  }
+
+  /**
+   * 编辑菜单
+   *
+   * @param body
+   */
+  static editMenu(body: MenuQuery) {
+    return request<any, MenuVO[]>({
+      url: '/api/v1/menu/edit',
+      method: 'post',
+      data: body,
+    })
+  }
 }
 
 export default MenuAPI

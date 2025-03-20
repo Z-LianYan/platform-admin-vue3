@@ -91,5 +91,24 @@ declare global {
     /** 子列表  */
     children?: OptionType[]
   }
+
+  interface RouteRow {
+    admin_ids: string
+    children: any[]
+    component: string
+    created_at: string
+    delete_time: string
+    id: number
+    meta: any
+    name: string
+    path: string
+    pid: number
+    redirect: string
+    role_ids: string
+    sort: number
+    status: number
+    status_name: string
+    updated_at: string
+  }
 }
 export {}

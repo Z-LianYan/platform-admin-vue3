@@ -17,7 +17,7 @@
     >
       <el-form-item :label="$t('menuPage.pid')" prop="pid">
         <el-cascader
-          v-model="ruleForm.pid"
+          v-model="pids"
           :options="menu"
           clearable
           :props="{
@@ -170,6 +170,7 @@
 import { useMenuStore } from '@/store'
 import type { FormInstance, FormRules } from 'element-plus'
 import { translateRouteTitle } from '@/utils/i18n'
+import type { RouteRecordRaw } from 'vue-router'
 const drawer = ref(false)
 const type = ref<string>('')
 const { t, te } = useI18n()
@@ -185,6 +186,11 @@ const props = defineProps({
     default: () => {
       return []
     },
+  },
+  getMenu: {
+    required: false,
+    type: Function,
+    default: () => {},
   },
 })
 
@@ -205,7 +211,9 @@ interface RuleForm {
   icon: string
   affix: number
   pid: number
+  id?: number
 }
+const pids = ref<number[]>([])
 const ruleForm = reactive<RuleForm>({
   title: '',
   name: '',
@@ -220,6 +228,7 @@ const ruleForm = reactive<RuleForm>({
   icon: '',
   affix: 1, //否一直显示在历史菜单不可关闭（TagsView中显示）
   pid: 0,
+  id: 0,
 })
 const rules = reactive<FormRules<RuleForm>>({
   pid: [
@@ -258,7 +267,7 @@ const rules = reactive<FormRules<RuleForm>>({
   redirect: [
     {
       type: 'string',
-      required: true,
+      required: false,
       message: t('menuPage.message.redirect.required'),
       trigger: 'change',
     },
@@ -314,9 +323,44 @@ const rules = reactive<FormRules<RuleForm>>({
     },
   ],
 })
-const open = function (op_type: string) {
+
+function recursionMenu(menu: RouteRow[], filterId: number) {
+  let pids: number[] = []
+  if (!menu.length) return pids
+  for (const item of menu) {
+    const _pids = recursionMenu(item.children, filterId)
+    if (filterId == item.id) {
+      pids.push(item.id)
+    } else if (_pids?.length) {
+      pids.push(...[item.id, ..._pids])
+    }
+  }
+  return pids
+}
+const openFn = ref<Function>(() => {})
+const open = function (op_type: string, row: RouteRow, fun: Function) {
+  openFn.value = fun
   type.value = op_type
   drawer.value = true
+
+  if (['edit'].includes(op_type)) {
+    ruleForm.title = row?.meta?.title || ''
+    ruleForm.alwaysShow = row?.meta?.alwaysShow || 1
+    ruleForm.hidden = row?.meta?.hidden || 0
+    ruleForm.icon = row?.meta?.icon || ''
+    ruleForm.keepAlive = row?.meta?.keepAlive || 0
+    ruleForm.affix = row?.meta?.affix || 0
+
+    pids.value = recursionMenu(props.menu, row.pid)
+    ruleForm.pid = row?.pid || 0
+    ruleForm.name = row?.name || ''
+    ruleForm.path = row?.path || ''
+    ruleForm.component = row?.component || ''
+    ruleForm.redirect = row?.redirect || ''
+    ruleForm.status = row?.status || 1
+    ruleForm.sort = row?.sort || 0
+    ruleForm.id = row?.id || 0
+  }
 }
 const close = function () {
   drawer.value = true
@@ -325,12 +369,40 @@ onMounted(() => {})
 function handleClose(val: any) {
   drawer.value = false
 }
-
+// function addMenu() {}
 async function submitForm(formEl: FormInstance | undefined) {
   if (!formEl) return
   await formEl.validate((valid, fields) => {
     if (valid) {
       console.log('submit!')
+      if (['add'].includes(type.value))
+        useMenu.addMenu({
+          ...ruleForm,
+          meta: {
+            title: ruleForm.title,
+            alwaysShow: ruleForm.alwaysShow,
+            hidden: ruleForm.hidden,
+            icon: ruleForm.icon,
+            keepAlive: ruleForm.keepAlive,
+            affix: ruleForm.affix,
+          },
+        })
+
+      if (['edit'].includes(type.value))
+        useMenu.editMenu({
+          ...ruleForm,
+          ...ruleForm,
+          meta: {
+            title: ruleForm.title,
+            alwaysShow: ruleForm.alwaysShow,
+            hidden: ruleForm.hidden,
+            icon: ruleForm.icon,
+            keepAlive: ruleForm.keepAlive,
+            affix: ruleForm.affix,
+          },
+        })
+      // openFn.value()
+      props.getMenu()
     } else {
       console.log('error submit!', fields)
     }
@@ -342,7 +414,7 @@ function resetForm(formEl: FormInstance | undefined) {
 }
 
 function handleCascaderChange(val: any) {
-  console.log('======>>>', val)
+  ruleForm.pid = val
 }
 
 defineExpose({

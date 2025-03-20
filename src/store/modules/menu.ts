@@ -27,8 +27,46 @@ export const useMenuStore = defineStore('menu', () => {
     })
   }
 
+  /**
+   * 添加菜单
+   *
+   * @param {MenuVO}
+   * @returns
+   */
+  function addMenu(body: any) {
+    return new Promise((resolve, reject) => {
+      MenuAPI.addMenu(body)
+        .then(async (data) => {
+          resolve(data)
+        })
+        .catch((error) => {
+          reject(error)
+        })
+    })
+  }
+
+  /**
+   * 编辑菜单
+   *
+   * @param {MenuVO}
+   * @returns
+   */
+  function editMenu(body: any) {
+    return new Promise((resolve, reject) => {
+      MenuAPI.editMenu(body)
+        .then(async (data) => {
+          resolve(data)
+        })
+        .catch((error) => {
+          reject(error)
+        })
+    })
+  }
+
   return {
     getMenu,
+    addMenu,
+    editMenu,
   }
 })
 

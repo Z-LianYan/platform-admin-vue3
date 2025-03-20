@@ -219,7 +219,8 @@ function refreshSelectedTag(view: TagView) {
   tagsViewStore.delCachedView(view)
   const { fullPath } = view
   nextTick(() => {
-    router.replace({ path: '/redirect' + fullPath })
+    // router.replace({ path: '/redirect' + fullPath })
+    router.replace({ path: fullPath })
   })
 }
 

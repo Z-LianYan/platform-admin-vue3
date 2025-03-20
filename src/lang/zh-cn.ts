@@ -19,6 +19,7 @@ export default {
     disable: '禁用',
     submit: '提交',
     reset: '重置',
+    operation: '操作',
   },
   route: {
     System: '系统设置',

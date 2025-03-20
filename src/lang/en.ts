@@ -17,6 +17,7 @@ export default {
     disable: ' Disable',
     submit: 'Submit',
     reset: 'Reset',
+    operation: 'Operation',
   },
   route: {
     System: 'System set',
