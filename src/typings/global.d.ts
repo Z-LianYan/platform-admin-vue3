@@ -109,6 +109,7 @@ declare global {
     status: number
     status_name: string
     updated_at: string
+    label?: string
   }
 }
 export {}

@@ -11,7 +11,8 @@
     >
       <el-table-column prop="title" :label="$t('menuPage.menuTitle', '菜单标题')" width="180">
         <template #default="scope">{{
-          translateRouteTitle(scope.row.name, scope.row.meta.title)
+          // translateRouteTitle(scope.row.name, scope.row.meta.title)
+          scope.row.meta.title
         }}</template>
       </el-table-column>
       <el-table-column prop="address" :label="$t('menuPage.routeName', '路由名称')">
@@ -23,16 +24,16 @@
       <el-table-column prop="redirect" :label="$t('menuPage.redirect', '重定向')">
         <template #default="scope">{{ scope.row.redirect }}</template>
       </el-table-column>
-      <el-table-column prop="status_name" :label="$t('menuPage.status', '状态')" width="180">
+      <el-table-column prop="status_name" :label="$t('menuPage.status', '状态')" width="100">
         <template #default="scope">
           <el-tag :type="scope.row.status === 1 ? 'success' : 'info'" round>{{
             scope.row.status === 1 ? $t('common.normal', '正常') : $t('common.disable', '禁用')
           }}</el-tag>
         </template> </el-table-column
       >>
-      <el-table-column prop="sort" :label="$t('menuPage.sort', '排序')" width="180" />
+      <el-table-column prop="sort" :label="$t('menuPage.sort', '排序')" width="80" />
 
-      <el-table-column prop="" :label="$t('common.operation', '操作')" width="110px">
+      <el-table-column prop="" :label="$t('common.operation', '操作')" width="140px">
         <template #default="scope">
           <el-dropdown
             size="default"
@@ -64,7 +65,7 @@
     <el-button @click="getMenu">刷新</el-button>
   </el-card>
 
-  <AddEdit ref="addEditRef" :menu="tableData" :getMenu="getMenu" />
+  <AddEdit ref="addEditRef" :menu="tableData" />
 </template>
 <script setup lang="ts">
 import { translateRouteTitle } from '@/utils/i18n'
@@ -77,12 +78,13 @@ defineOptions({
 })
 const useMenu = useMenuStore()
 
-const tableData = reactive<any[]>([])
+const tableData = ref<RouteRow[]>([])
 const getMenu = async function () {
-  console.log('1234567')
   const result: any = await useMenu.getMenu({})
-  console.log('=======>>>', result)
-  Object.assign(tableData, result.rows)
+  console.log('获取菜单列表')
+  // Object.assign(tableData, [])
+  // Object.assign(tableData, result.rows)
+  tableData.value = result.rows
 }
 onMounted(() => {
   getMenu()
@@ -91,14 +93,22 @@ onMounted(() => {
 const addEditRef: any = ref(null)
 function handleDropdownClick(val: any, row: RouteRow) {
   if (['add', 'edit'].includes(val)) {
-    addEditRef.value.open(val, row, async () => {
-      console.log('我执行了====》〉》')
-      await getMenu()
+    addEditRef.value.open({
+      op_type: val,
+      row,
+      fun: async () => {
+        console.log('我执行了====》〉》')
+        await getMenu()
+      },
+      menu: tableData.value,
     })
   } else if (['del'].includes(val)) {
     console.log('删除')
   }
 }
+
+// 提供给子组件（如果需要的话）
+// provide('menu', tableData)
 </script>
 
 <style scoped lang="scss"></style>

@@ -3,7 +3,7 @@
     v-model="drawer"
     :title="['add'].includes(type) ? $t('common.add') : $t('common.edit')"
     direction="rtl"
-    :before-close="handleClose"
+    :before-close="close"
     size="50%"
   >
     <el-form
@@ -15,14 +15,17 @@
       :size="formSize"
       status-icon
     >
+      <el-form-item :label="$t('menuPage.menuTitle')" prop="title">
+        <el-input v-model="ruleForm.title" />
+      </el-form-item>
       <el-form-item :label="$t('menuPage.pid')" prop="pid">
         <el-cascader
           v-model="pids"
-          :options="menu"
+          :options="menuList"
           clearable
           :props="{
             multiple: false,
-            label: 'name',
+            label: 'label',
             value: 'id',
             children: 'children',
             checkStrictly: true, //checkStrictly = true 来设置父子节点取消选中关联，从而达到选择任意一级选项的目的
@@ -32,13 +35,14 @@
           @change="handleCascaderChange"
         >
           <template #default="scope">
-            {{ translateRouteTitle(scope.data.name, scope.data.meta.title) }}
+            {{
+              // translateRouteTitle(scope.data.name, scope.data.meta.title)
+              scope.data.meta.title
+            }}
           </template>
         </el-cascader>
       </el-form-item>
-      <el-form-item :label="$t('menuPage.menuTitle')" prop="title">
-        <el-input v-model="ruleForm.title" />
-      </el-form-item>
+
       <el-form-item :label="$t('menuPage.routeName')" prop="name">
         <el-input v-model="ruleForm.name" />
       </el-form-item>
@@ -171,6 +175,8 @@ import { useMenuStore } from '@/store'
 import type { FormInstance, FormRules } from 'element-plus'
 import { translateRouteTitle } from '@/utils/i18n'
 import type { RouteRecordRaw } from 'vue-router'
+import _ from 'lodash'
+import { relative } from 'path-browserify'
 const drawer = ref(false)
 const type = ref<string>('')
 const { t, te } = useI18n()
@@ -178,6 +184,27 @@ defineOptions({
   name: 'MenuAddEdit',
   inheritAttrs: false, //控制是否继承父组件传递过来的属性
 })
+const topMenu = {
+  admin_ids: '',
+  children: [],
+  component: '',
+  created_at: '',
+  delete_time: '',
+  id: 0,
+  meta: {
+    title: '顶级菜单',
+  },
+  name: 'TopMenu',
+  path: '',
+  pid: 0,
+  redirect: '',
+  role_ids: '',
+  sort: 0,
+  status: 0,
+  status_name: '',
+  updated_at: '',
+  label: '顶级菜单',
+}
 const useMenu = useMenuStore()
 const props = defineProps({
   menu: {
@@ -187,12 +214,21 @@ const props = defineProps({
       return []
     },
   },
-  getMenu: {
-    required: false,
-    type: Function,
-    default: () => {},
-  },
 })
+
+function recursionHanderMenu(menu: any[], disabledId: number = 0, pFlag: boolean = false) {
+  for (const item of menu) {
+    item.label = item.meta.title
+    if (disabledId && (disabledId === item.id || pFlag)) {
+      //编辑的时候，要编辑的数据如果有子菜单的话，要禁用子菜单(不能选择所属子菜单或者当前菜单)
+      item.disabled = true
+    }
+    if (item.children?.length) {
+      recursionHanderMenu(item.children, disabledId, item.disabled)
+    }
+  }
+}
+const menuList = ref<RouteRow[]>([])
 
 const ruleFormRef = ref<FormInstance>()
 const formSize = ref<any>('default')
@@ -214,7 +250,7 @@ interface RuleForm {
   id?: number
 }
 const pids = ref<number[]>([])
-const ruleForm = reactive<RuleForm>({
+const originRuleForm = {
   title: '',
   name: '',
   path: '',
@@ -229,7 +265,30 @@ const ruleForm = reactive<RuleForm>({
   affix: 1, //否一直显示在历史菜单不可关闭（TagsView中显示）
   pid: 0,
   id: 0,
-})
+}
+const ruleForm = reactive<RuleForm>(_.cloneDeep(originRuleForm))
+
+watch(
+  () => props.menu,
+  (newMenu, oldMenu) => {
+    console.log('前====》〉》0', newMenu, oldMenu)
+    menuList.value = _.cloneDeep(newMenu)
+    console.log('前====》〉》1', menuList.value)
+    if (ruleForm.name) {
+      //处理编辑的时候，修改了所属菜单，更新修改后的数据
+      menuList.value.unshift(topMenu)
+      recursionHanderMenu(menuList.value, (ruleForm as any).id)
+      console.log('=====监听到了', ruleForm.pid)
+      pids.value = recursionMenu(menuList.value, ruleForm.pid)
+
+      console.log('menuList.value========,,', menuList.value)
+    }
+  },
+  {
+    immediate: true,
+    deep: true,
+  },
+)
 const rules = reactive<FormRules<RuleForm>>({
   pid: [
     {
@@ -240,7 +299,7 @@ const rules = reactive<FormRules<RuleForm>>({
   ],
   title: [
     { required: true, message: t('menuPage.message.title.required'), trigger: 'blur' },
-    { min: 3, max: 5, message: t('menuPage.message.title.limit'), trigger: 'blur' },
+    { min: 1, max: 20, message: t('menuPage.message.title.limit'), trigger: 'blur' },
   ],
   name: [
     {
@@ -324,6 +383,11 @@ const rules = reactive<FormRules<RuleForm>>({
   ],
 })
 
+/**
+ * 递归查找选中的id
+ * @param menu
+ * @param filterId
+ */
 function recursionMenu(menu: RouteRow[], filterId: number) {
   let pids: number[] = []
   if (!menu.length) return pids
@@ -338,12 +402,24 @@ function recursionMenu(menu: RouteRow[], filterId: number) {
   return pids
 }
 const openFn = ref<Function>(() => {})
-const open = function (op_type: string, row: RouteRow, fun: Function) {
+const open = function ({
+  op_type,
+  row,
+  fun,
+  menu = [],
+}: {
+  op_type: string
+  row: RouteRow
+  fun: Function
+  menu: RouteRow[]
+}) {
   openFn.value = fun
   type.value = op_type
   drawer.value = true
-
+  menuList.value = _.cloneDeep(menu)
+  menuList.value.unshift(topMenu)
   if (['edit'].includes(op_type)) {
+    recursionHanderMenu(menuList.value, row.id)
     ruleForm.title = row?.meta?.title || ''
     ruleForm.alwaysShow = row?.meta?.alwaysShow || 1
     ruleForm.hidden = row?.meta?.hidden || 0
@@ -351,7 +427,6 @@ const open = function (op_type: string, row: RouteRow, fun: Function) {
     ruleForm.keepAlive = row?.meta?.keepAlive || 0
     ruleForm.affix = row?.meta?.affix || 0
 
-    pids.value = recursionMenu(props.menu, row.pid)
     ruleForm.pid = row?.pid || 0
     ruleForm.name = row?.name || ''
     ruleForm.path = row?.path || ''
@@ -360,23 +435,46 @@ const open = function (op_type: string, row: RouteRow, fun: Function) {
     ruleForm.status = row?.status || 1
     ruleForm.sort = row?.sort || 0
     ruleForm.id = row?.id || 0
+
+    pids.value = recursionMenu(menuList.value, row.pid)
+
+    console.log('ruleForm====>>', ruleForm)
+  } else {
+    recursionHanderMenu(menuList.value)
   }
 }
 const close = function () {
-  drawer.value = true
+  console.log('========>>>close')
+
+  ruleForm.title = originRuleForm.title
+  ruleForm.alwaysShow = originRuleForm.alwaysShow
+  ruleForm.hidden = originRuleForm.hidden
+  ruleForm.icon = originRuleForm.icon
+  ruleForm.keepAlive = originRuleForm.keepAlive
+  ruleForm.affix = originRuleForm.affix
+
+  ruleForm.pid = originRuleForm.pid
+  ruleForm.name = originRuleForm.name
+  ruleForm.path = originRuleForm.path
+  ruleForm.component = originRuleForm.component
+  ruleForm.redirect = originRuleForm?.redirect
+  ruleForm.status = originRuleForm?.status
+  ruleForm.sort = originRuleForm?.sort
+  ruleForm.id = originRuleForm?.id
+
+  drawer.value = false
+
+  // resetForm(ruleFormRef.value)
 }
 onMounted(() => {})
-function handleClose(val: any) {
-  drawer.value = false
-}
-// function addMenu() {}
+
 async function submitForm(formEl: FormInstance | undefined) {
   if (!formEl) return
-  await formEl.validate((valid, fields) => {
+  await formEl.validate(async (valid, fields) => {
     if (valid) {
       console.log('submit!')
       if (['add'].includes(type.value))
-        useMenu.addMenu({
+        await useMenu.addMenu({
           ...ruleForm,
           meta: {
             title: ruleForm.title,
@@ -389,7 +487,7 @@ async function submitForm(formEl: FormInstance | undefined) {
         })
 
       if (['edit'].includes(type.value))
-        useMenu.editMenu({
+        await useMenu.editMenu({
           ...ruleForm,
           ...ruleForm,
           meta: {
@@ -401,8 +499,8 @@ async function submitForm(formEl: FormInstance | undefined) {
             affix: ruleForm.affix,
           },
         })
-      // openFn.value()
-      props.getMenu()
+
+      openFn.value()
     } else {
       console.log('error submit!', fields)
     }
@@ -414,6 +512,7 @@ function resetForm(formEl: FormInstance | undefined) {
 }
 
 function handleCascaderChange(val: any) {
+  console.log('=====>>handleCascaderChange', val)
   ruleForm.pid = val
 }
 
