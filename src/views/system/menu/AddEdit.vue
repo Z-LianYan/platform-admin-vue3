@@ -10,9 +10,9 @@
       ref="ruleFormRef"
       :model="ruleForm"
       :rules="rules"
-      label-width="130px"
+      label-width="140px"
       class="demo-ruleForm"
-      :size="formSize"
+      size="default"
       status-icon
     >
       <el-form-item :label="$t('menuPage.menuTitle')" prop="title">
@@ -161,6 +161,41 @@
           <el-radio :label="0" size="large">{{ $t('common.no') }}</el-radio>
         </el-radio-group>
       </el-form-item>
+      <el-form-item :label="$t('menuPage.adminPermission')" prop="">
+        <el-select
+          v-model="ruleForm.admin_ids"
+          multiple
+          filterable
+          remote
+          reserve-keyword
+          :placeholder="$t('menuPage.adminPermissionPlaceholder')"
+          :remote-method="adminIdsRemoteMethod"
+          :loading="adminIdsLoading"
+          style="width: 240px"
+        >
+          <el-option v-for="item in adminList" :key="item.id" :label="item.name" :value="item.id" />
+        </el-select>
+      </el-form-item>
+      <el-form-item :label="$t('menuPage.rolePermission')" prop="">
+        <el-select
+          v-model="ruleForm.role_ids"
+          multiple
+          filterable
+          remote
+          reserve-keyword
+          :placeholder="$t('menuPage.rolePermissionPlaceholder')"
+          :remote-method="roleIdsRemoteMethod"
+          :loading="adminIdsLoading"
+          style="width: 240px"
+        >
+          <el-option
+            v-for="item in roleList"
+            :key="item.id"
+            :label="item.role_name"
+            :value="item.id"
+          />
+        </el-select>
+      </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="submitForm(ruleFormRef)">
           {{ $t('common.submit') }}
@@ -171,11 +206,11 @@
   </el-drawer>
 </template>
 <script setup lang="ts">
-import { useMenuStore } from '@/store'
-import type { FormInstance, FormRules } from 'element-plus'
+import { useMenuStore, useAdminStore, useAdminRoleStore } from '@/store'
+import type { FormInstance, FormRules, TransferDataItem } from 'element-plus'
 import { translateRouteTitle } from '@/utils/i18n'
 import type { RouteRecordRaw } from 'vue-router'
-import _ from 'lodash'
+import _, { truncate } from 'lodash'
 import { relative } from 'path-browserify'
 const drawer = ref(false)
 const type = ref<string>('')
@@ -185,7 +220,6 @@ defineOptions({
   inheritAttrs: false, //控制是否继承父组件传递过来的属性
 })
 const topMenu = {
-  admin_ids: '',
   children: [],
   component: '',
   created_at: '',
@@ -198,12 +232,13 @@ const topMenu = {
   path: '',
   pid: 0,
   redirect: '',
-  role_ids: '',
   sort: 0,
   status: 0,
   status_name: '',
   updated_at: '',
   label: '顶级菜单',
+  admin_ids: [],
+  role_ids: [],
 }
 const useMenu = useMenuStore()
 const props = defineProps({
@@ -231,7 +266,6 @@ function recursionHanderMenu(menu: any[], disabledId: number = 0, pFlag: boolean
 const menuList = ref<RouteRow[]>([])
 
 const ruleFormRef = ref<FormInstance>()
-const formSize = ref<any>('default')
 
 interface RuleForm {
   title: string
@@ -248,6 +282,8 @@ interface RuleForm {
   affix: number
   pid: number
   id?: number
+  admin_ids: number[]
+  role_ids: number[]
 }
 const pids = ref<number[]>([])
 const originRuleForm = {
@@ -265,23 +301,20 @@ const originRuleForm = {
   affix: 1, //否一直显示在历史菜单不可关闭（TagsView中显示）
   pid: 0,
   id: 0,
+  admin_ids: [],
+  role_ids: [],
 }
 const ruleForm = reactive<RuleForm>(_.cloneDeep(originRuleForm))
 
 watch(
   () => props.menu,
   (newMenu, oldMenu) => {
-    console.log('前====》〉》0', newMenu, oldMenu)
     menuList.value = _.cloneDeep(newMenu)
-    console.log('前====》〉》1', menuList.value)
     if (ruleForm.name) {
       //处理编辑的时候，修改了所属菜单，更新修改后的数据
       menuList.value.unshift(topMenu)
       recursionHanderMenu(menuList.value, (ruleForm as any).id)
-      console.log('=====监听到了', ruleForm.pid)
       pids.value = recursionMenu(menuList.value, ruleForm.pid)
-
-      console.log('menuList.value========,,', menuList.value)
     }
   },
   {
@@ -305,14 +338,14 @@ const rules = reactive<FormRules<RuleForm>>({
     {
       required: true,
       message: t('menuPage.message.name.required'),
-      trigger: 'change',
+      trigger: 'blur',
     },
   ],
   path: [
     {
       required: true,
       message: t('menuPage.message.path.required'),
-      trigger: 'change',
+      trigger: 'blur',
     },
   ],
   component: [
@@ -320,7 +353,7 @@ const rules = reactive<FormRules<RuleForm>>({
       type: 'string',
       required: true,
       message: t('menuPage.message.component.required'),
-      trigger: 'change',
+      trigger: 'blur',
     },
   ],
   redirect: [
@@ -328,7 +361,7 @@ const rules = reactive<FormRules<RuleForm>>({
       type: 'string',
       required: false,
       message: t('menuPage.message.redirect.required'),
-      trigger: 'change',
+      trigger: 'blur',
     },
   ],
   status: [
@@ -371,7 +404,7 @@ const rules = reactive<FormRules<RuleForm>>({
     {
       required: true,
       message: t('menuPage.message.icon.required'),
-      trigger: 'change',
+      trigger: 'blur',
     },
   ],
   affix: [
@@ -402,7 +435,7 @@ function recursionMenu(menu: RouteRow[], filterId: number) {
   return pids
 }
 const openFn = ref<Function>(() => {})
-const open = function ({
+const open = async function ({
   op_type,
   row,
   fun,
@@ -435,17 +468,26 @@ const open = function ({
     ruleForm.status = row?.status || 1
     ruleForm.sort = row?.sort || 0
     ruleForm.id = row?.id || 0
+    ruleForm.admin_ids = row?.admin_ids || []
+    ruleForm.role_ids = row?.role_ids || []
 
     pids.value = recursionMenu(menuList.value, row.pid)
 
-    console.log('ruleForm====>>', ruleForm)
+    await getAdminList({
+      keywords: '',
+      ids: Array.isArray(row.admin_ids) ? row.admin_ids.join(',') : row.admin_ids,
+    })
+    await getRoleList({
+      keywords: '',
+      ids: Array.isArray(row.role_ids) ? row.role_ids.join(',') : row.role_ids,
+    })
   } else {
+    ruleForm.pid = row.id
+    pids.value = recursionMenu(menuList.value, row.id)
     recursionHanderMenu(menuList.value)
   }
 }
 const close = function () {
-  console.log('========>>>close')
-
   ruleForm.title = originRuleForm.title
   ruleForm.alwaysShow = originRuleForm.alwaysShow
   ruleForm.hidden = originRuleForm.hidden
@@ -462,11 +504,14 @@ const close = function () {
   ruleForm.sort = originRuleForm?.sort
   ruleForm.id = originRuleForm?.id
 
+  ruleForm.admin_ids = []
+  ruleForm.role_ids = []
+
   drawer.value = false
 
   // resetForm(ruleFormRef.value)
 }
-onMounted(() => {})
+onMounted(async () => {})
 
 async function submitForm(formEl: FormInstance | undefined) {
   if (!formEl) return
@@ -474,31 +519,41 @@ async function submitForm(formEl: FormInstance | undefined) {
     if (valid) {
       console.log('submit!')
       if (['add'].includes(type.value))
-        await useMenu.addMenu({
-          ...ruleForm,
-          meta: {
-            title: ruleForm.title,
-            alwaysShow: ruleForm.alwaysShow,
-            hidden: ruleForm.hidden,
-            icon: ruleForm.icon,
-            keepAlive: ruleForm.keepAlive,
-            affix: ruleForm.affix,
+        await useMenu.addMenu(
+          {
+            ...ruleForm,
+            meta: {
+              title: ruleForm.title,
+              alwaysShow: ruleForm.alwaysShow,
+              hidden: ruleForm.hidden,
+              icon: ruleForm.icon,
+              keepAlive: ruleForm.keepAlive,
+              affix: ruleForm.affix,
+            },
           },
-        })
+          {
+            loading: true,
+          },
+        )
 
       if (['edit'].includes(type.value))
-        await useMenu.editMenu({
-          ...ruleForm,
-          ...ruleForm,
-          meta: {
-            title: ruleForm.title,
-            alwaysShow: ruleForm.alwaysShow,
-            hidden: ruleForm.hidden,
-            icon: ruleForm.icon,
-            keepAlive: ruleForm.keepAlive,
-            affix: ruleForm.affix,
+        await useMenu.editMenu(
+          {
+            ...ruleForm,
+            ...ruleForm,
+            meta: {
+              title: ruleForm.title,
+              alwaysShow: ruleForm.alwaysShow,
+              hidden: ruleForm.hidden,
+              icon: ruleForm.icon,
+              keepAlive: ruleForm.keepAlive,
+              affix: ruleForm.affix,
+            },
           },
-        })
+          {
+            loading: true,
+          },
+        )
 
       openFn.value()
     } else {
@@ -512,13 +567,46 @@ function resetForm(formEl: FormInstance | undefined) {
 }
 
 function handleCascaderChange(val: any) {
-  console.log('=====>>handleCascaderChange', val)
   ruleForm.pid = val
 }
 
+const useAdmin = useAdminStore()
+const adminIdsLoading = ref<boolean>(false)
+const adminList = ref<any>([])
+async function getAdminList(param: { keywords: string; ids?: string }) {
+  adminIdsLoading.value = true
+  const result: any = await useAdmin.getList({
+    keywords: param?.keywords || '',
+    ids: param?.ids || '',
+  })
+  adminList.value = result.rows
+  adminIdsLoading.value = false
+}
+function adminIdsRemoteMethod(query: string) {
+  getAdminList({
+    keywords: query,
+  })
+}
+
+const useAdminRole = useAdminRoleStore()
+const roleList = ref<any[]>([])
+async function getRoleList(param: { keywords?: string; ids?: string }) {
+  adminIdsLoading.value = true
+  const result: any = await useAdminRole.getList({
+    keywords: param?.keywords || '',
+    ids: param?.ids || '',
+  })
+  roleList.value = result.rows
+  adminIdsLoading.value = false
+}
+
+function roleIdsRemoteMethod(query: string) {
+  getRoleList({
+    keywords: query,
+  })
+}
 defineExpose({
   open,
-  close,
 })
 </script>
 

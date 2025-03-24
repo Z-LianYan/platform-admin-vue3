@@ -19,7 +19,9 @@ export default {
     disable: '禁用',
     submit: '提交',
     reset: '重置',
+    filter: '筛选',
     operation: '操作',
+    keywords: '关键字搜索',
   },
   route: {
     System: '系统设置',
@@ -73,6 +75,7 @@ export default {
       },
     },
   },
+
   menuPage: {
     menuTitle: '菜单标题',
     routeName: '路由名称',
@@ -91,6 +94,13 @@ export default {
     affix: '附上',
     affixTip: '释：tagsView 预览历史菜单上没预览过的菜单默认显示且不可关闭',
     pid: '所属菜单',
+    listFilterForm: {
+      k_s_placeholder: '搜索菜单标题',
+    },
+    rolePermission: '角色权限',
+    adminPermission: '管理员权限',
+    adminPermissionPlaceholder: '请选择授权管理员',
+    rolePermissionPlaceholder: '请选择授权角色',
     message: {
       pid: {
         required: '请选择所属菜单',

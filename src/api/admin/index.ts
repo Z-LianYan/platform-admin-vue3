@@ -1,7 +1,7 @@
 import request from '@/utils/request'
 import type { UserForm, AdminInfo, UserPageVO, UserQuery } from './model'
 
-class UserAPI {
+class AdminAPI {
   /**
    * 登录成功后获取用户信息（昵称、头像、权限集合和角色集合）
    */
@@ -12,18 +12,18 @@ class UserAPI {
     })
   }
 
-  // /**
-  //  * 获取用户分页列表
-  //  *
-  //  * @param queryParams
-  //  */
-  // static getPage(queryParams: UserQuery) {
-  //   return request<any, PageResult<UserPageVO[]>>({
-  //     url: '/api/v1/users/page',
-  //     method: 'get',
-  //     params: queryParams,
-  //   })
-  // }
+  /**
+   * 获取管理员列表
+   *
+   * @param body
+   */
+  static getList(body: UserQuery) {
+    return request<any, PageResult<UserPageVO[]>>({
+      url: '/api/v1/admin/getList',
+      method: 'post',
+      data: body,
+    })
+  }
 
   // /**
   //  * 获取用户表单详情
@@ -138,4 +138,4 @@ class UserAPI {
   // }
 }
 
-export default UserAPI
+export default AdminAPI

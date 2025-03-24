@@ -93,7 +93,6 @@ declare global {
   }
 
   interface RouteRow {
-    admin_ids: string
     children: any[]
     component: string
     created_at: string
@@ -104,12 +103,13 @@ declare global {
     path: string
     pid: number
     redirect: string
-    role_ids: string
     sort: number
     status: number
     status_name: string
     updated_at: string
     label?: string
+    admin_ids: number[]
+    role_ids: number[]
   }
 }
 export {}

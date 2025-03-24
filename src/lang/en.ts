@@ -17,7 +17,9 @@ export default {
     disable: ' Disable',
     submit: 'Submit',
     reset: 'Reset',
+    filter: 'filter',
     operation: 'Operation',
+    keywords: 'Keyword Search',
   },
   route: {
     System: 'System set',
@@ -92,6 +94,13 @@ export default {
     affixTip:
       'Explanation: TagsView preview history menu shows menus that have not been previewed before by default and cannot be closed',
     pid: 'Belonging Menu',
+    listFilterForm: {
+      k_s_placeholder: 'search menu title',
+    },
+    rolePermission: 'Role Permission',
+    adminPermission: 'Admin Permission',
+    adminPermissionPlaceholder: 'PPlease select an authorized administrator',
+    rolePermissionPlaceholder: 'Please select an authorized role',
     message: {
       pid: {
         required: 'Please select the belonging menu',

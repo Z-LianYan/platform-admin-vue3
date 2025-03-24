@@ -9,7 +9,7 @@ import { TOKEN_KEY } from '@/enums/CacheEnum'
 import request from '@/utils/request'
 import { settings } from 'nprogress'
 
-export const useAdminStore = defineStore('user', () => {
+export const useAdminStore = defineStore('admin', () => {
   const admin = ref<AdminInfo>({})
 
   /**
@@ -98,6 +98,19 @@ export const useAdminStore = defineStore('user', () => {
     })
   }
 
+  function getList(body: any) {
+    return new Promise<AdminInfo>((resolve, reject) => {
+      AdminAPI.getList(body)
+        .then((data: any) => {
+          resolve(data)
+        })
+        .catch((error) => {
+          console.log('出错误了', error.message)
+          reject(error)
+        })
+    })
+  }
+
   return {
     admin,
     login,
@@ -105,6 +118,7 @@ export const useAdminStore = defineStore('user', () => {
     logout,
     resetToken,
     getCaptcha,
+    getList,
   }
 })
 

@@ -1,6 +1,26 @@
 <template>
+  <el-card>
+    <el-form
+      :model="fetchOptions"
+      label-width="130px"
+      class="demo-ruleForm"
+      size="default"
+      status-icon
+    >
+      <el-form-item :label="$t('common.keywords')" prop="title">
+        <el-input
+          v-model="fetchOptions.keywords"
+          :placeholder="$t('menuPage.listFilterForm.k_s_placeholder')"
+        />
+      </el-form-item>
+      <el-form-item label="" prop="">
+        <el-button type="primary" @click="onFilter">{{ $t('common.filter') }}</el-button>
+      </el-form-item>
+    </el-form>
+  </el-card>
   <el-card class="card-margin">
     <el-table
+      v-loading="loading"
       :data="tableData"
       :border="true"
       stripe
@@ -9,11 +29,25 @@
       default-expand-all
       :tree-props="{ children: 'children' }"
     >
-      <el-table-column prop="title" :label="$t('menuPage.menuTitle', '菜单标题')" width="180">
-        <template #default="scope">{{
-          // translateRouteTitle(scope.row.name, scope.row.meta.title)
-          scope.row.meta.title
-        }}</template>
+      <template slot="empty">
+        <p :class="{ 'ellipsis-loading': true }">数据加载中</p>
+      </template>
+      <el-table-column prop="title" :label="$t('menuPage.menuTitle', '菜单标题')" width="220">
+        <template #default="scope">
+          <el-icon
+            v-if="scope.row.meta?.icon && scope.row.meta.icon.startsWith('el-icon')"
+            class="sub-el-icon"
+          >
+            <component :is="scope.row.meta.icon.replace('el-icon-', '')" />
+          </el-icon>
+          <i
+            v-else-if="scope.row.meta.icon.startsWith('iconfont')"
+            :class="[scope.row.meta.icon, 'sub-el-icon']"
+          ></i>
+          <svg-icon v-else-if="scope.row.meta.icon" :icon-class="scope.row.meta.icon" />
+          <svg-icon v-else icon-class="menu" />
+          {{ scope.row.meta.title }}
+        </template>
       </el-table-column>
       <el-table-column prop="address" :label="$t('menuPage.routeName', '路由名称')">
         <template #default="scope">{{ scope.row.name }}</template>
@@ -61,8 +95,6 @@
         </template>
       </el-table-column>
     </el-table>
-
-    <el-button @click="getMenu">刷新</el-button>
   </el-card>
 
   <AddEdit ref="addEditRef" :menu="tableData" />
@@ -72,20 +104,25 @@ import { translateRouteTitle } from '@/utils/i18n'
 import { useMenuStore } from '@/store'
 import AddEdit from './AddEdit.vue'
 import type { RouteRecordRaw } from 'vue-router'
+import { filterOption } from 'element-plus/es/components/mention/src/helper.mjs'
 defineOptions({
   name: 'Menu',
   inheritAttrs: false, //控制是否继承父组件传递过来的属性
 })
 const useMenu = useMenuStore()
 
+const fetchOptions = reactive({
+  keywords: '',
+})
+const loading = ref<boolean>(false)
 const tableData = ref<RouteRow[]>([])
 const getMenu = async function () {
-  const result: any = await useMenu.getMenu({})
-  console.log('获取菜单列表')
-  // Object.assign(tableData, [])
-  // Object.assign(tableData, result.rows)
+  loading.value = true
+  const result: any = await useMenu.getMenu(fetchOptions)
   tableData.value = result.rows
+  loading.value = false
 }
+
 onMounted(() => {
   getMenu()
 })
@@ -97,7 +134,6 @@ function handleDropdownClick(val: any, row: RouteRow) {
       op_type: val,
       row,
       fun: async () => {
-        console.log('我执行了====》〉》')
         await getMenu()
       },
       menu: tableData.value,
@@ -106,9 +142,9 @@ function handleDropdownClick(val: any, row: RouteRow) {
     console.log('删除')
   }
 }
-
-// 提供给子组件（如果需要的话）
-// provide('menu', tableData)
+function onFilter() {
+  getMenu()
+}
 </script>
 
 <style scoped lang="scss"></style>
