@@ -24,27 +24,7 @@ export interface UserQuery extends PageQuery {
 /**
  * 用户分页对象
  */
-export interface UserPageVO {
-  /**
-   * 用户头像地址
-   */
-  avatar?: string
-  /**
-   * 创建时间
-   */
-  createTime?: Date
-  /**
-   * 部门名称
-   */
-  deptName?: string
-  /**
-   * 用户邮箱
-   */
-  email?: string
-  /**
-   * 性别
-   */
-  genderLabel?: string
+export interface AdminPageVO {
   /**
    * 用户ID
    */
@@ -52,23 +32,46 @@ export interface UserPageVO {
   /**
    * 手机号
    */
-  mobile?: string
+  phone?: string
   /**
-   * 用户昵称
+   * 管理名
    */
-  nickname?: string
+  name?: string
   /**
-   * 角色名称，多个使用英文逗号(,)分割
+   * 密码
    */
-  roleNames?: string
+  password?: string
+  /**
+   * 角色id
+   */
+  role_id?: number
+  /**
+   * 最后登录时间
+   */
+  last_login_time?: Date
+
   /**
    * 用户状态(1:启用;0:禁用)
    */
   status?: number
   /**
-   * 用户名
+   * 删除时间
    */
-  username?: string
+  delete_time?: Date
+
+  /**
+   * 用户头像地址
+   */
+  avatar?: string
+
+  /**
+   * 创建时间
+   */
+  created_at?: Date
+  /**
+   * 创建时间
+   */
+  updated_at?: Date
 }
 
 /**

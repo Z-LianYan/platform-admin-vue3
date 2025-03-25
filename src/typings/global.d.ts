@@ -19,7 +19,7 @@ declare global {
   /**
    * 分页响应对象
    */
-  interface PageResult<T> {
+  interface PageResult<T> extends ResponseData {
     /** 数据列表 */
     list: T
     /** 总数 */

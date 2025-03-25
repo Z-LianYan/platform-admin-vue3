@@ -1,12 +1,12 @@
 import request from '@/utils/request'
-import type { UserForm, AdminInfo, UserPageVO, UserQuery } from './model'
+import type { UserForm, AdminInfo, AdminPageVO, UserQuery } from './model'
 
 class AdminAPI {
   /**
    * 登录成功后获取用户信息（昵称、头像、权限集合和角色集合）
    */
   static getAdminInfo() {
-    return request<any, AdminInfo>({
+    return request<any, ResponseData<AdminInfo>>({
       url: '/api/v1/admin/getInfo',
       method: 'post',
     })
@@ -18,7 +18,7 @@ class AdminAPI {
    * @param body
    */
   static getList(body: UserQuery) {
-    return request<any, PageResult<UserPageVO[]>>({
+    return request<any, PageResult<AdminPageVO[]>>({
       url: '/api/v1/admin/getList',
       method: 'post',
       data: body,

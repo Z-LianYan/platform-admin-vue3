@@ -1,74 +1,44 @@
 /**
- * 登录用户信息
- */
-export interface AdminInfo {
-  id?: number
-  name?: string
-  phone?: string
-  avatar?: string
-  role_id?: string
-  status?: number
-}
-
-/**
  * 用户查询对象类型
  */
-export interface UserQuery extends PageQuery {
+export interface AdminRoleQuery extends PageQuery {
   keywords?: string
-  status?: number
-  deptId?: number
-  startTime?: string
-  endTime?: string
+  need_ids?: number[]
 }
 
 /**
  * 用户分页对象
  */
-export interface UserPageVO {
-  /**
-   * 用户头像地址
-   */
-  avatar?: string
-  /**
-   * 创建时间
-   */
-  createTime?: Date
-  /**
-   * 部门名称
-   */
-  deptName?: string
-  /**
-   * 用户邮箱
-   */
-  email?: string
-  /**
-   * 性别
-   */
-  genderLabel?: string
+export interface AdminRolePageVO {
   /**
    * 用户ID
    */
   id?: number
   /**
-   * 手机号
+   * 用户头像地址
    */
-  mobile?: string
+  role_name?: string
   /**
-   * 用户昵称
+   * 创建时间
    */
-  nickname?: string
+  created_at?: Date
   /**
-   * 角色名称，多个使用英文逗号(,)分割
+   * 更新时间
    */
-  roleNames?: string
+  updated_at?: Date
+  /**
+   * 部门名称
+   */
+  remark?: string
+  /**
+   * 删除时间
+   */
+  deleted_time?: Date
+
   /**
    * 用户状态(1:启用;0:禁用)
    */
   status?: number
-  /**
-   * 用户名
-   */
-  username?: string
 }
 
 /**

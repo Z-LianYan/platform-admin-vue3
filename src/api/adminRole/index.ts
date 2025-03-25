@@ -1,5 +1,5 @@
 import request from '@/utils/request'
-import type { UserForm, AdminInfo, UserPageVO, UserQuery } from './model'
+import type { AdminRolePageVO, AdminRoleQuery } from './model'
 
 class AdminRoleAPI {
   /**
@@ -7,8 +7,8 @@ class AdminRoleAPI {
    *
    * @param body
    */
-  static getList(body: UserQuery) {
-    return request<any, PageResult<UserPageVO[]>>({
+  static getList(body: AdminRoleQuery) {
+    return request<any, PageResult<AdminRolePageVO[]>>({
       url: '/api/v1/adminRole/getList',
       method: 'post',
       data: body,

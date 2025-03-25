@@ -34,33 +34,34 @@ const hasPermission = (roles: string[], route: any) => {
  * 递归过滤有权限的动态路由
  *
  * @param routes 接口返回所有的动态路由
- * @param roles 用户角色集合
  * @returns 返回用户有权限的动态路由
  */
-const filterAsyncRoutes = (routes: RouteVO[], roles: string[]) => {
+const filterAsyncRoutes = (routes: RouteVO[]) => {
   const asyncRoutes: RouteRecordRaw[] = []
   routes.forEach((route) => {
     const tmpRoute = { ...route } as RouteRecordRaw // 深拷贝 route 对象 避免污染
-    if (hasPermission(roles, tmpRoute)) {
-      // 如果是顶级目录，替换为 Layout 组件
-      if (tmpRoute.component?.toString() == 'Layout') {
-        tmpRoute.component = Layout
+    // if (hasPermission(roles, tmpRoute)) {
+    // 如果是顶级目录，替换为 Layout 组件
+    if (tmpRoute.component?.toString() == 'Layout') {
+      tmpRoute.component = Layout
+    } else if (tmpRoute.component?.toString() == 'Layout') {
+      // component: () => import('@/views/system/menu/index.vue'),component: () => import('@/views/system/admin/index.vue'),component: () => import('@/views/system/role/index.vue'),
+    } else {
+      // 如果是子目录，动态加载组件
+      const component = modules[`../../views/${tmpRoute.component}.vue`]
+      if (component) {
+        tmpRoute.component = component
       } else {
-        // 如果是子目录，动态加载组件
-        const component = modules[`../../views/${tmpRoute.component}.vue`]
-        if (component) {
-          tmpRoute.component = component
-        } else {
-          tmpRoute.component = modules[`../../views/error-page/404.vue`]
-        }
+        tmpRoute.component = modules[`../../views/error-page/404.vue`]
       }
-
-      if (tmpRoute.children) {
-        tmpRoute.children = filterAsyncRoutes(route.children, roles)
-      }
-
-      asyncRoutes.push(tmpRoute)
     }
+
+    if (tmpRoute.children) {
+      tmpRoute.children = filterAsyncRoutes(route.children)
+    }
+
+    asyncRoutes.push(tmpRoute)
+    // }
   })
   return asyncRoutes
 }
@@ -80,20 +81,21 @@ export const usePermissionStore = defineStore('permission', () => {
    * @param roles 用户角色集合
    * @returns
    */
-  function generateRoutes(roles: string[]) {
+  function generateRoutes() {
     return new Promise<RouteRecordRaw[]>((resolve, reject) => {
       // 接口获取所有路由
-      // MenuAPI.getRoutes()
-      //   .then((data: any) => {
-      //     // 过滤有权限的动态路由
-      //     const accessedRoutes = filterAsyncRoutes(data, roles)
-      //     setRoutes(accessedRoutes)
-      //     resolve(accessedRoutes)
-      //   })
-      //   .catch((error) => {
-      //     reject(error)
-      //   })
-
+      MenuAPI.getRoutes()
+        .then((response: any) => {
+          console.log('routes=====>>', response.data)
+          // 过滤有权限的动态路由
+          const accessedRoutes = filterAsyncRoutes(response.data)
+          console.log('accessedRoutes====>>>', accessedRoutes)
+          setRoutes(accessedRoutes)
+          resolve(accessedRoutes)
+        })
+        .catch((error) => {
+          reject(error)
+        })
       setRoutes([])
       resolve([])
     })

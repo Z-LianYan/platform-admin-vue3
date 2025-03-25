@@ -33,7 +33,7 @@ service.interceptors.request.use(
 // 响应拦截器
 service.interceptors.response.use(
   (response: any) => {
-    console.log('response', response)
+    // console.log('response', response)
     // 检查配置的响应类型是否为二进制类型（'blob' 或 'arraybuffer'）, 如果是，直接返回响应对象
     // if (
     //   response.config.responseType === "blob" ||
@@ -44,7 +44,7 @@ service.interceptors.response.use(
 
     const { code, data, msg } = response.data
     if (code === ResultEnum.SUCCESS) {
-      return data
+      return response.data
     } else if (code === ResultEnum.TOKEN_INVALID) {
       // 这种情况是当后端设置成全是返回 200 状态是起作用
       ElMessageBox.confirm('当前页面已失效，请重新登录', '提示', {

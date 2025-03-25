@@ -3,7 +3,7 @@ import { resetRouter } from '@/router'
 import { store } from '@/store'
 
 import type { LoginData } from '@/api/auth/model'
-import type { AdminInfo } from '@/api/admin/model'
+import type { AdminRolePageVO } from '@/api/adminRole/model'
 import { TOKEN_KEY } from '@/enums/CacheEnum'
 import request from '@/utils/request'
 import { settings } from 'nprogress'
@@ -11,10 +11,10 @@ import AdminRoleAPI from '@/api/adminRole'
 
 export const useAdminRoleStore = defineStore('adminRole', () => {
   function getList(body: any) {
-    return new Promise<AdminInfo>((resolve, reject) => {
+    return new Promise((resolve, reject) => {
       AdminRoleAPI.getList(body)
-        .then((data: any) => {
-          resolve(data)
+        .then((response: any) => {
+          resolve(response.data)
         })
         .catch((error) => {
           console.log('出错误了', error.message)

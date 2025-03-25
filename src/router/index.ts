@@ -26,7 +26,7 @@ export const constantRoutes: RouteRecordRaw[] = [
       title: 'Layout布局',
       roles: ['ADMIN'],
       alwaysShow: true,
-      icon: 'iconfont icon-qingjia',
+      icon: 'el-icon-setting',
     },
     redirect: '/test/home',
     children: [
@@ -108,7 +108,7 @@ export const constantRoutes: RouteRecordRaw[] = [
     meta: {
       title: '系统设置',
       alwaysShow: true,
-      icon: 'iconfont icon-qingjia',
+      icon: 'iconfont icon-jiaoseguanli1',
     },
     redirect: '/system/menu',
     children: [

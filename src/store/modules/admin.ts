@@ -39,8 +39,8 @@ export const useAdminStore = defineStore('admin', () => {
   function login(loginData: LoginData) {
     return new Promise<void>((resolve, reject) => {
       AuthAPI.login(loginData)
-        .then(async (data) => {
-          const { accessToken } = data
+        .then(async (response) => {
+          const { accessToken } = response.data
           localStorage.setItem(TOKEN_KEY, '' + accessToken) // Bearer eyJhbGciOiJIUzI1NiJ9.xxx.xxx
           resolve()
         })
@@ -52,20 +52,15 @@ export const useAdminStore = defineStore('admin', () => {
 
   // 获取信息(用户昵称、头像、角色集合、权限集合)
   function getAdminInfo() {
-    return new Promise<AdminInfo>((resolve, reject) => {
+    return new Promise<ResponseData<AdminInfo>>((resolve, reject) => {
       AdminAPI.getAdminInfo()
-        .then((data: any) => {
-          if (!data) {
+        .then((response) => {
+          if (!response.data) {
             reject('Verification failed, please Login again.')
             return
           }
-          // if (!data.roles || data.roles.length <= 0) {
-          //   console.log('+++')
-          //   reject('getAdminInfo: roles must be a non-null array!')
-          //   return
-          // }
-          Object.assign(admin.value, { ...data })
-          resolve(data)
+          Object.assign(admin.value, { ...response.data })
+          resolve(response)
         })
         .catch((error) => {
           console.log('出错误了', error.message)
@@ -101,8 +96,8 @@ export const useAdminStore = defineStore('admin', () => {
   function getList(body: any) {
     return new Promise<AdminInfo>((resolve, reject) => {
       AdminAPI.getList(body)
-        .then((data: any) => {
-          resolve(data)
+        .then((response) => {
+          resolve(response.data)
         })
         .catch((error) => {
           console.log('出错误了', error.message)

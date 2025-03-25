@@ -5,12 +5,12 @@ class MenuAPI {
   /**
    * 获取路由列表
    */
-  // static getRoutes() {
-  //   return request<any, RouteVO[]>({
-  //     url: '/api/v1/menus/routes',
-  //     method: 'get',
-  //   })
-  // }
+  static getRoutes() {
+    return request<any, RouteVO[]>({
+      url: '/api/v1/menu/routes',
+      method: 'post',
+    })
+  }
 
   /**
    * 获取菜单树形列表
@@ -18,7 +18,7 @@ class MenuAPI {
    * @param queryParams
    */
   static getMenuList(queryParams: MenuQuery) {
-    return request<any, MenuVO[]>({
+    return request<any, ResponseData<MenuVO>>({
       url: '/api/v1/menu/getList',
       method: 'post',
       data: queryParams,
@@ -30,8 +30,8 @@ class MenuAPI {
    *
    * @param body
    */
-  static addMenu(body: MenuQuery) {
-    return request<any, MenuVO[]>({
+  static addMenu(body: any) {
+    return request<any, any>({
       url: '/api/v1/menu/add',
       method: 'post',
       data: body,
@@ -43,8 +43,8 @@ class MenuAPI {
    *
    * @param body
    */
-  static editMenu(body: MenuQuery) {
-    return request<any, MenuVO[]>({
+  static editMenu(body: any) {
+    return request<any, any>({
       url: '/api/v1/menu/edit',
       method: 'post',
       data: body,

@@ -7,7 +7,7 @@ import type { MenuVO } from '@/api/menu/model'
 import { TOKEN_KEY } from '@/enums/CacheEnum'
 import request from '@/utils/request'
 import { settings } from 'nprogress'
-import { ElLoading } from 'element-plus'
+import { ElLoading, ElNotification } from 'element-plus'
 
 export const useMenuStore = defineStore('menu', () => {
   /**
@@ -28,8 +28,8 @@ export const useMenuStore = defineStore('menu', () => {
 
     return new Promise((resolve, reject) => {
       MenuAPI.getMenuList(queryParams)
-        .then(async (data) => {
-          resolve(data)
+        .then(async (response) => {
+          resolve(response.data)
           loading && loading.close()
         })
         .catch((error) => {
@@ -56,8 +56,9 @@ export const useMenuStore = defineStore('menu', () => {
     }
     return new Promise((resolve, reject) => {
       MenuAPI.addMenu(body)
-        .then(async (data) => {
-          resolve(data)
+        .then(async (response) => {
+          resolve(response.data)
+          ElMessage.success(response.msg)
           loading && loading.close()
         })
         .catch((error) => {
@@ -84,8 +85,14 @@ export const useMenuStore = defineStore('menu', () => {
     }
     return new Promise((resolve, reject) => {
       MenuAPI.editMenu(body)
-        .then(async (data) => {
-          resolve(data)
+        .then(async (response) => {
+          resolve(response.data)
+          ElMessage.success(response.msg)
+          ElNotification({
+            title: 'Success',
+            message: 'This is a success message',
+            type: 'success',
+          })
           loading && loading.close()
         })
         .catch((error) => {

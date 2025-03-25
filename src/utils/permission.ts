@@ -41,14 +41,13 @@ export function setupPermission() {
         } else {
           const permissionStore = usePermissionStore()
           try {
-            const { roles } = await adminStore.getAdminInfo()
-            // console.log('1111', to)
-            const accessRoutes = await permissionStore.generateRoutes(['ADMIN'])
-            // console.log('accessRoutes====>>>', accessRoutes)
-            // accessRoutes.forEach((route: RouteRecordRaw) => {
-            //   console.log('======>>>', route)
-            //   router.addRoute(route)
-            // })
+            await adminStore.getAdminInfo()
+            const accessRoutes = await permissionStore.generateRoutes()
+            console.log('accessRoutes====>>>00', accessRoutes)
+            accessRoutes.forEach((route: RouteRecordRaw) => {
+              console.log('======>>>', route)
+              router.addRoute(route)
+            })
 
             // next({ ...to, replace: true })
             next()

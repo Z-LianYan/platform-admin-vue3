@@ -1,7 +1,7 @@
 <template>
   <el-drawer
     v-model="drawer"
-    :title="['add'].includes(type) ? $t('common.add') : $t('common.edit')"
+    :title="['add'].includes(opType) ? $t('common.add') : $t('common.edit')"
     direction="rtl"
     :before-close="close"
     size="50%"
@@ -93,7 +93,7 @@
         <el-input v-model="ruleForm.icon" />
       </el-form-item>
       <el-form-item :label="$t('menuPage.sort')" prop="sort">
-        <el-input v-model="ruleForm.sort" />
+        <el-input type="number" v-model="ruleForm.sort" />
       </el-form-item>
       <el-form-item :label="$t('menuPage.status')" prop="status">
         <!-- <el-input v-model="ruleForm.status" /> -->
@@ -213,7 +213,7 @@ import type { RouteRecordRaw } from 'vue-router'
 import _, { truncate } from 'lodash'
 import { relative } from 'path-browserify'
 const drawer = ref(false)
-const type = ref<string>('')
+const opType = ref<string>('')
 const { t, te } = useI18n()
 defineOptions({
   name: 'MenuAddEdit',
@@ -447,7 +447,7 @@ const open = async function ({
   menu: RouteRow[]
 }) {
   openFn.value = fun
-  type.value = op_type
+  opType.value = op_type
   drawer.value = true
   menuList.value = _.cloneDeep(menu)
   menuList.value.unshift(topMenu)
@@ -475,11 +475,11 @@ const open = async function ({
 
     await getAdminList({
       keywords: '',
-      ids: Array.isArray(row.admin_ids) ? row.admin_ids.join(',') : row.admin_ids,
+      need_ids: row.admin_ids || [],
     })
     await getRoleList({
       keywords: '',
-      ids: Array.isArray(row.role_ids) ? row.role_ids.join(',') : row.role_ids,
+      need_ids: row.role_ids || [],
     })
   } else {
     ruleForm.pid = row.id
@@ -516,12 +516,15 @@ onMounted(async () => {})
 async function submitForm(formEl: FormInstance | undefined) {
   if (!formEl) return
   await formEl.validate(async (valid, fields) => {
+    console
     if (valid) {
-      console.log('submit!')
-      if (['add'].includes(type.value))
+      console.log('submit!', opType.value)
+      // return
+      if (['add'].includes(opType.value)) {
         await useMenu.addMenu(
           {
             ...ruleForm,
+            sort: Number(ruleForm.sort),
             meta: {
               title: ruleForm.title,
               alwaysShow: ruleForm.alwaysShow,
@@ -535,8 +538,9 @@ async function submitForm(formEl: FormInstance | undefined) {
             loading: true,
           },
         )
+      }
 
-      if (['edit'].includes(type.value))
+      if (['edit'].includes(opType.value)) {
         await useMenu.editMenu(
           {
             ...ruleForm,
@@ -554,6 +558,7 @@ async function submitForm(formEl: FormInstance | undefined) {
             loading: true,
           },
         )
+      }
 
       openFn.value()
     } else {
@@ -573,11 +578,11 @@ function handleCascaderChange(val: any) {
 const useAdmin = useAdminStore()
 const adminIdsLoading = ref<boolean>(false)
 const adminList = ref<any>([])
-async function getAdminList(param: { keywords: string; ids?: string }) {
+async function getAdminList(param: { keywords: string; need_ids?: number[] }) {
   adminIdsLoading.value = true
   const result: any = await useAdmin.getList({
     keywords: param?.keywords || '',
-    ids: param?.ids || '',
+    need_ids: param?.need_ids || [],
   })
   adminList.value = result.rows
   adminIdsLoading.value = false
@@ -585,16 +590,17 @@ async function getAdminList(param: { keywords: string; ids?: string }) {
 function adminIdsRemoteMethod(query: string) {
   getAdminList({
     keywords: query,
+    need_ids: ruleForm.admin_ids || [],
   })
 }
 
 const useAdminRole = useAdminRoleStore()
 const roleList = ref<any[]>([])
-async function getRoleList(param: { keywords?: string; ids?: string }) {
+async function getRoleList(param: { keywords?: string; need_ids?: number[] }) {
   adminIdsLoading.value = true
   const result: any = await useAdminRole.getList({
     keywords: param?.keywords || '',
-    ids: param?.ids || '',
+    need_ids: param?.need_ids || [],
   })
   roleList.value = result.rows
   adminIdsLoading.value = false
@@ -603,6 +609,7 @@ async function getRoleList(param: { keywords?: string; ids?: string }) {
 function roleIdsRemoteMethod(query: string) {
   getRoleList({
     keywords: query,
+    need_ids: ruleForm.role_ids || [],
   })
 }
 defineExpose({
