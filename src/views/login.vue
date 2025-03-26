@@ -171,9 +171,9 @@ function showSystemName() {
 }
 /** 获取验证码 */
 function getCaptcha() {
-  adminStore.getCaptcha().then((data: any) => {
-    loginData.value.captchaKey = data.captchaKey
-    captchaBase64.value = data.captchaBase64
+  adminStore.getCaptcha().then((response: any) => {
+    loginData.value.captchaKey = response.data.captchaKey
+    captchaBase64.value = response.data.captchaBase64
   })
 }
 

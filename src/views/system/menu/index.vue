@@ -105,6 +105,7 @@ import { useMenuStore } from '@/store'
 import AddEdit from './AddEdit.vue'
 import type { RouteRecordRaw } from 'vue-router'
 import { filterOption } from 'element-plus/es/components/mention/src/helper.mjs'
+import router from '@/router'
 defineOptions({
   name: 'Menu',
   inheritAttrs: false, //控制是否继承父组件传递过来的属性

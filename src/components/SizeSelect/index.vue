@@ -19,21 +19,21 @@
 </template>
 
 <script setup lang="ts">
-import { SizeEnum } from "@/enums/SizeEnum";
-import { useAppStore } from "@/store/modules/app";
+import { SizeEnum } from '@/enums/SizeEnum'
+import { useAppStore } from '@/store/modules/app'
 
-const { t } = useI18n();
+const { t } = useI18n()
 const sizeOptions = computed(() => {
   return [
-    { label: t("sizeSelect.default"), value: SizeEnum.DEFAULT },
-    { label: t("sizeSelect.large"), value: SizeEnum.LARGE },
-    { label: t("sizeSelect.small"), value: SizeEnum.SMALL },
-  ];
-});
+    { label: t('sizeSelect.default'), value: SizeEnum.DEFAULT },
+    { label: t('sizeSelect.large'), value: SizeEnum.LARGE },
+    { label: t('sizeSelect.small'), value: SizeEnum.SMALL },
+  ]
+})
 
-const appStore = useAppStore();
+const appStore = useAppStore()
 function handleSizeChange(size: string) {
-  appStore.changeSize(size);
-  ElMessage.success(t("sizeSelect.message.success"));
+  appStore.changeSize(size)
+  ElMessage.success(t('sizeSelect.message.success'))
 }
 </script>

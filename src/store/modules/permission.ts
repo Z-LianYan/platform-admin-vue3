@@ -3,76 +3,51 @@ import { constantRoutes } from '@/router'
 import { store } from '@/store'
 import MenuAPI from '@/api/menu'
 import type { RouteVO } from '@/api/menu/model'
-
+import router from '@/router'
 const modules = (import.meta as any).glob('../../views/**/**.vue')
 const Layout = () => import('@/layout/index.vue')
-const Home = () => import('@/views/Home.vue')
-const Home1 = () => import('@/views/Home1.vue')
-/**
- * Use meta.role to determine if the current user has permission
- *
- * @param roles 用户角色集合
- * @param route 路由
- * @returns
- */
-const hasPermission = (roles: string[], route: any) => {
-  if (route.meta && route.meta.roles) {
-    // 角色【超级管理员】拥有所有权限，忽略校验
-    if (roles.includes('ROOT')) {
-      return true
-    }
-    return roles.some((role) => {
-      if (route.meta?.roles) {
-        return route.meta.roles.includes(role)
-      }
-    })
-  }
-  return false
-}
 
-/**
- * 递归过滤有权限的动态路由
- *
- * @param routes 接口返回所有的动态路由
- * @returns 返回用户有权限的动态路由
- */
-const filterAsyncRoutes = (routes: RouteVO[]) => {
-  const asyncRoutes: RouteRecordRaw[] = []
-  routes.forEach((route) => {
-    const tmpRoute = { ...route } as RouteRecordRaw // 深拷贝 route 对象 避免污染
-    // if (hasPermission(roles, tmpRoute)) {
-    // 如果是顶级目录，替换为 Layout 组件
-    if (tmpRoute.component?.toString() == 'Layout') {
-      tmpRoute.component = Layout
-    } else if (tmpRoute.component?.toString() == 'Layout') {
-      // component: () => import('@/views/system/menu/index.vue'),component: () => import('@/views/system/admin/index.vue'),component: () => import('@/views/system/role/index.vue'),
-    } else {
-      // 如果是子目录，动态加载组件
-      const component = modules[`../../views/${tmpRoute.component}.vue`]
-      if (component) {
-        tmpRoute.component = component
-      } else {
-        tmpRoute.component = modules[`../../views/error-page/404.vue`]
-      }
-    }
-
-    if (tmpRoute.children) {
-      tmpRoute.children = filterAsyncRoutes(route.children)
-    }
-
-    asyncRoutes.push(tmpRoute)
-    // }
-  })
-  return asyncRoutes
-}
 // setup
 export const usePermissionStore = defineStore('permission', () => {
   // state
   const routes = ref<RouteRecordRaw[]>([])
 
+  // 路由是否已加载
+  const isRoutesLoaded = ref(false)
+
   // actions
   function setRoutes(newRoutes: RouteRecordRaw[]) {
     routes.value = constantRoutes.concat(newRoutes)
+  }
+
+  /**
+   * 递归过滤有权限的动态路由
+   *
+   * @param routes 接口返回所有的动态路由
+   * @returns 返回用户有权限的动态路由
+   */
+  const filterAsyncRoutes = (routes: RouteVO[]) => {
+    const asyncRoutes: RouteRecordRaw[] = []
+    routes.forEach((route) => {
+      const tmpRoute = { ...route } as RouteRecordRaw // 深拷贝 route 对象 避免污染
+      /**
+       * 处理组件路径
+       *
+       * 如果是顶级目录，替换为 Layout 组件
+       * */
+      tmpRoute.component =
+        tmpRoute.component?.toString() === 'Layout'
+          ? Layout
+          : modules[`../../views/${tmpRoute.component}.vue`] ||
+            modules['../../views/error-page/404.vue']
+
+      if (tmpRoute.children) {
+        tmpRoute.children = filterAsyncRoutes(route.children)
+      }
+
+      asyncRoutes.push(tmpRoute)
+    })
+    return asyncRoutes
   }
 
   /**
@@ -86,18 +61,16 @@ export const usePermissionStore = defineStore('permission', () => {
       // 接口获取所有路由
       MenuAPI.getRoutes()
         .then((response: any) => {
-          console.log('routes=====>>', response.data)
           // 过滤有权限的动态路由
           const accessedRoutes = filterAsyncRoutes(response.data)
-          console.log('accessedRoutes====>>>', accessedRoutes)
           setRoutes(accessedRoutes)
           resolve(accessedRoutes)
+
+          isRoutesLoaded.value = true
         })
         .catch((error) => {
           reject(error)
         })
-      setRoutes([])
-      resolve([])
     })
   }
 
@@ -111,12 +84,30 @@ export const usePermissionStore = defineStore('permission', () => {
       mixLeftMenus.value = matchedItem.children
     }
   }
+
+  /**
+   * 重置路由
+   */
+  const resetRouter = () => {
+    //  从 router 实例中移除动态路由
+    routes.value.forEach((route) => {
+      if (route.name && !constantRoutes.find((r) => r.name === route.name)) {
+        router.removeRoute(route.name)
+      }
+    })
+
+    // 清空本地存储的路由和菜单数据
+    routes.value = []
+    mixLeftMenus.value = []
+    isRoutesLoaded.value = false
+  }
   return {
     routes,
     setRoutes,
     generateRoutes,
     mixLeftMenus,
     setMixLeftMenus,
+    resetRouter,
   }
 })
 

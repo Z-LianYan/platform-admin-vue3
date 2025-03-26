@@ -1,3 +1,4 @@
+import type { App } from 'vue'
 import { createI18n } from 'vue-i18n'
 import enLocale from './en'
 import zhLocale from './zh-cn'
@@ -12,4 +13,10 @@ const i18n = createI18n({
     en: enLocale,
   },
 })
+
+// 全局注册 i18n
+export function setupI18n(app: App<Element>) {
+  app.use(i18n)
+}
+
 export default i18n

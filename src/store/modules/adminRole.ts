@@ -1,5 +1,4 @@
 import AuthAPI from '@/api/auth'
-import { resetRouter } from '@/router'
 import { store } from '@/store'
 
 import type { LoginData } from '@/api/auth/model'
@@ -17,7 +16,6 @@ export const useAdminRoleStore = defineStore('adminRole', () => {
           resolve(response.data)
         })
         .catch((error) => {
-          console.log('出错误了', error.message)
           reject(error)
         })
     })

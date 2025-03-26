@@ -1,7 +1,6 @@
 import AuthAPI from '@/api/auth'
 import AdminAPI from '@/api/admin'
-import { resetRouter } from '@/router'
-import { store } from '@/store'
+import { store, usePermissionStoreHook } from '@/store'
 
 import type { LoginData } from '@/api/auth/model'
 import type { AdminInfo } from '@/api/admin/model'
@@ -63,7 +62,7 @@ export const useAdminStore = defineStore('admin', () => {
           resolve(response)
         })
         .catch((error) => {
-          console.log('出错误了', error.message)
+          console.log('出错误了getAdminInfo', error.message)
           reject(error)
         })
     })
@@ -85,12 +84,15 @@ export const useAdminStore = defineStore('admin', () => {
   }
 
   // remove token
-  function resetToken() {
-    return new Promise<void>((resolve) => {
-      localStorage.setItem(TOKEN_KEY, '')
-      resetRouter()
-      resolve()
-    })
+  // function resetToken() {
+  //   return new Promise<void>((resolve) => {
+  //     localStorage.setItem(TOKEN_KEY, '')
+  //     resetRouter()
+  //     resolve()
+  //   })
+  // }
+  function clearToken() {
+    localStorage.removeItem(TOKEN_KEY)
   }
 
   function getList(body: any) {
@@ -100,9 +102,22 @@ export const useAdminStore = defineStore('admin', () => {
           resolve(response.data)
         })
         .catch((error) => {
-          console.log('出错误了', error.message)
           reject(error)
         })
+    })
+  }
+
+  /**
+   * 清理用户数据
+   *
+   * @returns
+   */
+  function clearAdminData() {
+    return new Promise<void>((resolve) => {
+      clearToken()
+      usePermissionStoreHook().resetRouter()
+      // useDictStoreHook().clearDictionaryCache();
+      resolve()
     })
   }
 
@@ -111,9 +126,11 @@ export const useAdminStore = defineStore('admin', () => {
     login,
     getAdminInfo,
     logout,
-    resetToken,
+    // resetToken,
     getCaptcha,
     getList,
+    clearAdminData,
+    clearToken,
   }
 })
 

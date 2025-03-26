@@ -12,7 +12,7 @@ export const enum ResultEnum {
   ERROR = 400,
 
   /**
-   * 请求授权失败(账户被禁用了/账号异常)
+   * 请求授权失败(账户被禁用了/账号无权限访问/账号已经被禁用)
    */
   UN_AUTHORIZED = 401,
 

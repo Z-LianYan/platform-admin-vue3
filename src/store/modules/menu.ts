@@ -1,6 +1,5 @@
 import AuthAPI from '@/api/auth'
 import MenuAPI from '@/api/menu'
-import { resetRouter } from '@/router'
 import { store } from '@/store'
 
 import type { MenuVO } from '@/api/menu/model'

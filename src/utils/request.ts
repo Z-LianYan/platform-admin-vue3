@@ -4,6 +4,7 @@ import { ResultEnum } from '@/enums/ResultEnum'
 import { ElMessage } from 'element-plus'
 import { TOKEN_KEY } from '@/enums/CacheEnum'
 import { useAdminStoreHook } from '@/store'
+import router from '@/router'
 
 // 创建 axios 实例
 const service = axios.create({
@@ -52,16 +53,14 @@ service.interceptors.response.use(
         cancelButtonText: '取消',
         type: 'warning',
       }).then(async () => {
-        const userStore = useAdminStoreHook()
-        await userStore.resetToken()
+        await useAdminStoreHook().clearAdminData()
         location.reload()
       })
     } else if (code === ResultEnum.UN_AUTHORIZED) {
       // 这种情况是当后端设置成全是返回 200 状态是起作用
       ElMessage.error(msg || '系统出错')
       setTimeout(async () => {
-        const userStore = useAdminStoreHook()
-        await userStore.resetToken()
+        await useAdminStoreHook().clearAdminData()
         location.reload()
       }, 1000)
     }
@@ -78,15 +77,14 @@ service.interceptors.response.use(
           cancelButtonText: '取消',
           type: 'warning',
         }).then(async () => {
-          const userStore = useAdminStoreHook()
-          await userStore.resetToken()
+          await useAdminStoreHook().clearAdminData()
           location.reload()
         })
       } else if (code === ResultEnum.UN_AUTHORIZED) {
         ElMessage.error(msg || '系统出错')
         setTimeout(async () => {
-          const userStore = useAdminStoreHook()
-          await userStore.resetToken()
+          await useAdminStoreHook().clearAdminData()
+          // router.replace('/login')
           location.reload()
         }, 1000)
       } else {

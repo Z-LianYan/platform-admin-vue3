@@ -295,10 +295,10 @@ const originRuleForm = {
   status: 1,
   sort: 0,
   hidden: 0,
-  alwaysShow: 1, //只有一个子路由时是否显示父级菜单
-  keepAlive: 1,
+  alwaysShow: 0, //只有一个子路由时是否显示父级菜单
+  keepAlive: 0,
   icon: '',
-  affix: 1, //否一直显示在历史菜单不可关闭（TagsView中显示）
+  affix: 0, //否一直显示在历史菜单不可关闭（TagsView中显示）
   pid: 0,
   id: 0,
   admin_ids: [],
@@ -454,7 +454,7 @@ const open = async function ({
   if (['edit'].includes(op_type)) {
     recursionHanderMenu(menuList.value, row.id)
     ruleForm.title = row?.meta?.title || ''
-    ruleForm.alwaysShow = row?.meta?.alwaysShow || 1
+    ruleForm.alwaysShow = row?.meta?.alwaysShow || 0
     ruleForm.hidden = row?.meta?.hidden || 0
     ruleForm.icon = row?.meta?.icon || ''
     ruleForm.keepAlive = row?.meta?.keepAlive || 0
@@ -465,14 +465,13 @@ const open = async function ({
     ruleForm.path = row?.path || ''
     ruleForm.component = row?.component || ''
     ruleForm.redirect = row?.redirect || ''
-    ruleForm.status = row?.status || 1
+    ruleForm.status = row?.status && row?.status === 0 ? row?.status : 1
     ruleForm.sort = row?.sort || 0
     ruleForm.id = row?.id || 0
     ruleForm.admin_ids = row?.admin_ids || []
     ruleForm.role_ids = row?.role_ids || []
 
     pids.value = recursionMenu(menuList.value, row.pid)
-
     await getAdminList({
       keywords: '',
       need_ids: row.admin_ids || [],
