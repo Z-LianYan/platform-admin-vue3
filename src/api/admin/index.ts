@@ -24,6 +24,44 @@ class AdminAPI {
       data: body,
     })
   }
+  /**
+   * 添加管理员
+   *
+   * @param body
+   */
+  static add(body: any) {
+    return request<any, PageResult<AdminPageVO[]>>({
+      url: '/api/v1/admin/add',
+      method: 'post',
+      data: body,
+    })
+  }
+
+  /**
+   * 编辑管理员
+   *
+   * @param body
+   */
+  static edit(body: any) {
+    return request<any, PageResult<AdminPageVO[]>>({
+      url: '/api/v1/admin/edit',
+      method: 'post',
+      data: body,
+    })
+  }
+
+  /**
+   *  删除管理员
+   *
+   * @param body
+   */
+  static del(body: any) {
+    return request<any, PageResult<AdminPageVO[]>>({
+      url: '/api/v1/admin/del',
+      method: 'post',
+      data: body,
+    })
+  }
 
   // /**
   //  * 获取用户表单详情

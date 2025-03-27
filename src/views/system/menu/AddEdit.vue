@@ -95,8 +95,7 @@
       <el-form-item :label="$t('menuPage.sort')" prop="sort">
         <el-input type="number" v-model="ruleForm.sort" />
       </el-form-item>
-      <el-form-item :label="$t('menuPage.status')" prop="status">
-        <!-- <el-input v-model="ruleForm.status" /> -->
+      <el-form-item :label="$t('common.status')" prop="status">
         <el-radio-group v-model="ruleForm.status" class="ml-4">
           <el-radio :label="1" size="large">{{ $t('common.normal') }}</el-radio>
           <el-radio :label="0" size="large">{{ $t('common.disable') }}</el-radio>
@@ -208,8 +207,6 @@
 <script setup lang="ts">
 import { useMenuStore, useAdminStore, useAdminRoleStore } from '@/store'
 import type { FormInstance, FormRules, TransferDataItem } from 'element-plus'
-import { translateRouteTitle } from '@/utils/i18n'
-import type { RouteRecordRaw } from 'vue-router'
 import _, { truncate } from 'lodash'
 import { relative } from 'path-browserify'
 const drawer = ref(false)

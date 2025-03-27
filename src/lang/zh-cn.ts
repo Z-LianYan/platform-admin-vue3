@@ -22,6 +22,15 @@ export default {
     filter: '筛选',
     operation: '操作',
     keywords: '关键字搜索',
+    created_at: '创建时间',
+    updated_at: '更新时间',
+    delete_time: '删除时间',
+    id: '编号',
+    status: '状态',
+    delConfirm: {
+      title: '温馨提示',
+      describe: '此操作将永久删除该数据。继续吗？',
+    },
   },
   route: {
     System: '系统设置',
@@ -141,6 +150,50 @@ export default {
       },
       affix: {
         required: '请选择是否附上',
+      },
+    },
+  },
+  adminPage: {
+    name: '姓名',
+    phone: '手机号',
+    avatar: '头像',
+    role_id: '角色',
+    last_login_time: '最后登录时间',
+    password: '密码',
+    role_id_placeholder: '请选择管理员角色',
+    listFilterForm: {
+      k_s_placeholder: '搜索管理员姓名、手机号',
+    },
+    message: {
+      name: {
+        required: '请输入管理员姓名',
+      },
+      phone: {
+        required: '请输入管理员手机号码',
+      },
+      role: {
+        required: '请选择管理员所属角色',
+      },
+      avatar: {
+        required: '请上传管理员头像',
+      },
+    },
+  },
+  adminRolePage: {
+    role_name: '角色名称',
+    remark: '备注',
+    listFilterForm: {
+      k_s_placeholder: '搜索角色名称',
+    },
+    message: {
+      role_name: {
+        required: '请输入角色名称',
+      },
+      remark: {
+        required: '请输入备注',
+      },
+      status: {
+        required: '请选择状态',
       },
     },
   },

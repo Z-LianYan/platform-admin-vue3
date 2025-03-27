@@ -7,6 +7,7 @@ import type { AdminInfo } from '@/api/admin/model'
 import { TOKEN_KEY } from '@/enums/CacheEnum'
 import request from '@/utils/request'
 import { settings } from 'nprogress'
+import { ElLoading } from 'element-plus'
 
 export const useAdminStore = defineStore('admin', () => {
   const admin = ref<AdminInfo>({})
@@ -107,6 +108,75 @@ export const useAdminStore = defineStore('admin', () => {
     })
   }
 
+  function add(body: any, extra: any = { loading: false, text: 'Loading' }) {
+    let loading = null
+    if (extra.loading) {
+      loading = ElLoading.service({
+        lock: true,
+        text: extra.text || 'Loading',
+        background: 'rgba(0, 0, 0, 0.7)',
+      })
+    }
+    return new Promise<AdminInfo>((resolve, reject) => {
+      AdminAPI.add(body)
+        .then((response) => {
+          resolve(response.data)
+          ElMessage.success(response.msg)
+          loading && loading.close()
+        })
+        .catch((error) => {
+          loading && loading.close()
+          reject(error)
+        })
+    })
+  }
+
+  function edit(body: any, extra: any = { loading: false, text: 'Loading' }) {
+    let loading = null
+    if (extra.loading) {
+      loading = ElLoading.service({
+        lock: true,
+        text: extra.text || 'Loading',
+        background: 'rgba(0, 0, 0, 0.7)',
+      })
+    }
+    return new Promise<AdminInfo>((resolve, reject) => {
+      AdminAPI.edit(body)
+        .then((response) => {
+          resolve(response.data)
+          ElMessage.success(response.msg)
+          loading && loading.close()
+        })
+        .catch((error) => {
+          loading && loading.close()
+          reject(error)
+        })
+    })
+  }
+
+  function del(body: any, extra: any = { loading: false, text: 'Loading' }) {
+    let loading = null
+    if (extra.loading) {
+      loading = ElLoading.service({
+        lock: true,
+        text: extra.text || 'Loading',
+        background: 'rgba(0, 0, 0, 0.7)',
+      })
+    }
+    return new Promise<AdminInfo>((resolve, reject) => {
+      AdminAPI.del(body)
+        .then((response) => {
+          resolve(response.data)
+          ElMessage.success(response.msg)
+          loading && loading.close()
+        })
+        .catch((error) => {
+          loading && loading.close()
+          reject(error)
+        })
+    })
+  }
+
   /**
    * 清理用户数据
    *
@@ -131,6 +201,9 @@ export const useAdminStore = defineStore('admin', () => {
     getList,
     clearAdminData,
     clearToken,
+    add,
+    edit,
+    del,
   }
 })
 

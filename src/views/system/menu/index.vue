@@ -6,15 +6,19 @@
       class="demo-ruleForm"
       size="default"
       status-icon
+      @submit.native.prevent
     >
       <el-form-item :label="$t('common.keywords')" prop="title">
         <el-input
+          @keyup.enter.native="getMenu"
           v-model="fetchOptions.keywords"
           :placeholder="$t('menuPage.listFilterForm.k_s_placeholder')"
         />
       </el-form-item>
       <el-form-item label="" prop="">
-        <el-button type="primary" @click="onFilter">{{ $t('common.filter') }}</el-button>
+        <el-button native-type="button" type="primary" @click="onFilter">{{
+          $t('common.filter')
+        }}</el-button>
       </el-form-item>
     </el-form>
   </el-card>
@@ -29,9 +33,6 @@
       default-expand-all
       :tree-props="{ children: 'children' }"
     >
-      <template slot="empty">
-        <p :class="{ 'ellipsis-loading': true }">数据加载中</p>
-      </template>
       <el-table-column prop="title" :label="$t('menuPage.menuTitle', '菜单标题')" width="220">
         <template #default="scope">
           <el-icon
@@ -53,19 +54,19 @@
         <template #default="scope">{{ scope.row.name }}</template>
       </el-table-column>
       <el-table-column prop="path" :label="$t('menuPage.routePath', '路由路径')" width="180" />
-      <el-table-column prop="component" :label="$t('menuPage.component')" width="180" />
+      <el-table-column prop="component" :label="$t('menuPage.component', '组件')" width="180" />
 
       <el-table-column prop="redirect" :label="$t('menuPage.redirect', '重定向')">
         <template #default="scope">{{ scope.row.redirect }}</template>
       </el-table-column>
-      <el-table-column prop="status_name" :label="$t('menuPage.status', '状态')" width="100">
+      <el-table-column prop="sort" :label="$t('menuPage.sort', '排序')" width="80" />
+      <el-table-column prop="status_name" :label="$t('common.status', '状态')" width="100">
         <template #default="scope">
           <el-tag :type="scope.row.status === 1 ? 'success' : 'info'" round>{{
             scope.row.status === 1 ? $t('common.normal', '正常') : $t('common.disable', '禁用')
           }}</el-tag>
-        </template> </el-table-column
-      >>
-      <el-table-column prop="sort" :label="$t('menuPage.sort', '排序')" width="80" />
+        </template>
+      </el-table-column>
 
       <el-table-column prop="" :label="$t('common.operation', '操作')" width="140px">
         <template #default="scope">
@@ -95,6 +96,19 @@
         </template>
       </el-table-column>
     </el-table>
+    <el-pagination
+      style="justify-content: center; margin-top: 20px"
+      v-model:current-page="fetchOptions.page"
+      v-model:page-size="fetchOptions.limit"
+      :page-sizes="[20, 50, 100, 500]"
+      :small="false"
+      :disabled="false"
+      :background="false"
+      layout="total, sizes, prev, pager, next, jumper"
+      :total="total"
+      @size-change="handleSizeChange"
+      @current-change="handleCurrentChange"
+    />
   </el-card>
 
   <AddEdit ref="addEditRef" :menu="tableData" />
@@ -111,8 +125,10 @@ defineOptions({
   inheritAttrs: false, //控制是否继承父组件传递过来的属性
 })
 const useMenu = useMenuStore()
-
+const total = ref<number>(0)
 const fetchOptions = reactive({
+  page: 1,
+  limit: 20,
   keywords: '',
 })
 const loading = ref<boolean>(false)
@@ -120,8 +136,11 @@ const tableData = ref<RouteRow[]>([])
 const getMenu = async function () {
   loading.value = true
   const result: any = await useMenu.getMenu(fetchOptions)
+  console.log('result=====>>>', result)
   tableData.value = result.rows
   loading.value = false
+
+  total.value = result.count
 }
 
 onMounted(() => {
@@ -142,6 +161,16 @@ function handleDropdownClick(val: any, row: RouteRow) {
   } else if (['del'].includes(val)) {
     console.log('删除')
   }
+}
+function handleSizeChange(val: number) {
+  console.log('handleSizeChange====>>', val)
+  fetchOptions.limit = val
+  getMenu()
+}
+function handleCurrentChange(val: number) {
+  console.log('handleCurrentChange====>>', val)
+  fetchOptions.page = val
+  getMenu()
 }
 function onFilter() {
   getMenu()

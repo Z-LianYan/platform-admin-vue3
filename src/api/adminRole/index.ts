@@ -14,6 +14,45 @@ class AdminRoleAPI {
       data: body,
     })
   }
+
+  /**
+   * 添加角色
+   *
+   * @param body
+   */
+  static add(body: any) {
+    return request<any, PageResult<any[]>>({
+      url: '/api/v1/adminRole/add',
+      method: 'post',
+      data: body,
+    })
+  }
+
+  /**
+   * 编辑角色
+   *
+   * @param body
+   */
+  static edit(body: any) {
+    return request<any, PageResult<any[]>>({
+      url: '/api/v1/adminRole/edit',
+      method: 'post',
+      data: body,
+    })
+  }
+
+  /**
+   *  删除角色
+   *
+   * @param body
+   */
+  static del(body: any) {
+    return request<any, PageResult<any[]>>({
+      url: '/api/v1/adminRole/del',
+      method: 'post',
+      data: body,
+    })
+  }
 }
 
 export default AdminRoleAPI

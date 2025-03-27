@@ -29,7 +29,11 @@ export const usePermissionStore = defineStore('permission', () => {
   const filterAsyncRoutes = (routes: RouteVO[]) => {
     const asyncRoutes: RouteRecordRaw[] = []
     routes.forEach((route) => {
-      const tmpRoute = { ...route } as RouteRecordRaw // 深拷贝 route 对象 避免污染
+      const tmpRoute = { ...route } as any // 深拷贝 route 对象 避免污染
+      /**
+       * 容错处理，防止配置路由时顶级路径前面忘记输入“/”
+       */
+      if (tmpRoute.pid === 0 && !tmpRoute.path.startsWith('/')) tmpRoute.path = '/' + tmpRoute.path
       /**
        * 处理组件路径
        *
@@ -40,7 +44,6 @@ export const usePermissionStore = defineStore('permission', () => {
           ? Layout
           : modules[`../../views/${tmpRoute.component}.vue`] ||
             modules['../../views/error-page/404.vue']
-
       if (tmpRoute.children) {
         tmpRoute.children = filterAsyncRoutes(route.children)
       }

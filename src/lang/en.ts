@@ -20,6 +20,15 @@ export default {
     filter: 'filter',
     operation: 'Operation',
     keywords: 'Keyword Search',
+    created_at: 'Creation Time',
+    updated_at: 'Update Time',
+    delete_time: 'Delete Time',
+    id: 'ID',
+    status: 'Status',
+    delConfirm: {
+      title: 'Tips',
+      describe: 'This operation will permanently delete the data. continue?',
+    },
   },
   route: {
     System: 'System set',
@@ -141,6 +150,53 @@ export default {
       },
       affix: {
         required: 'Please choose whether to attach or not',
+      },
+    },
+  },
+  adminPage: {
+    name: 'Name',
+    phone: 'Phone Number',
+    avatar: 'Avatar',
+    role_id: 'Role',
+    last_login_time: 'Last Login Time',
+    password: 'Password',
+    role_id_placeholder: 'Please select the administrator role',
+    listFilterForm: {
+      k_s_placeholder: 'Search for administrator name and phone number ',
+    },
+    message: {
+      name: {
+        required: 'Please enter the administrator name',
+      },
+      phone: {
+        required: "Please enter the administrator's mobile phone number",
+      },
+      role_id: {
+        required: 'Please select the role to which the administrator belongs',
+      },
+      avatar: {
+        required: 'Please upload the administrator profile picture',
+      },
+      status: {
+        required: 'Please select the status',
+      },
+    },
+  },
+  adminRolePage: {
+    role_name: 'Role Name',
+    remark: 'Remark',
+    listFilterForm: {
+      k_s_placeholder: 'Search for role name',
+    },
+    message: {
+      role_name: {
+        required: 'Please enter the role name',
+      },
+      remark: {
+        required: 'Please enter a note',
+      },
+      status: {
+        required: 'Please select the status',
       },
     },
   },

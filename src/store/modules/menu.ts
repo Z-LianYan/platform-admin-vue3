@@ -87,11 +87,6 @@ export const useMenuStore = defineStore('menu', () => {
         .then(async (response) => {
           resolve(response.data)
           ElMessage.success(response.msg)
-          ElNotification({
-            title: 'Success',
-            message: 'This is a success message',
-            type: 'success',
-          })
           loading && loading.close()
         })
         .catch((error) => {

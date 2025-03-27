@@ -7,6 +7,7 @@ import { TOKEN_KEY } from '@/enums/CacheEnum'
 import request from '@/utils/request'
 import { settings } from 'nprogress'
 import AdminRoleAPI from '@/api/adminRole'
+import { ElLoading } from 'element-plus'
 
 export const useAdminRoleStore = defineStore('adminRole', () => {
   function getList(body: any) {
@@ -21,8 +22,80 @@ export const useAdminRoleStore = defineStore('adminRole', () => {
     })
   }
 
+  function add(body: any, extra: any = { loading: false, text: 'Loading' }) {
+    let loading = null
+    if (extra.loading) {
+      loading = ElLoading.service({
+        lock: true,
+        text: extra.text || 'Loading',
+        background: 'rgba(0, 0, 0, 0.7)',
+      })
+    }
+    return new Promise<any>((resolve, reject) => {
+      AdminRoleAPI.add(body)
+        .then((response) => {
+          resolve(response.data)
+          ElMessage.success(response.msg)
+          loading && loading.close()
+        })
+        .catch((error) => {
+          loading && loading.close()
+          reject(error)
+        })
+    })
+  }
+
+  function edit(body: any, extra: any = { loading: false, text: 'Loading' }) {
+    let loading = null
+    if (extra.loading) {
+      loading = ElLoading.service({
+        lock: true,
+        text: extra.text || 'Loading',
+        background: 'rgba(0, 0, 0, 0.7)',
+      })
+    }
+    return new Promise<any>((resolve, reject) => {
+      AdminRoleAPI.edit(body)
+        .then((response) => {
+          resolve(response.data)
+          ElMessage.success(response.msg)
+          loading && loading.close()
+        })
+        .catch((error) => {
+          loading && loading.close()
+          reject(error)
+        })
+    })
+  }
+
+  function del(body: any, extra: any = { loading: false, text: 'Loading' }) {
+    let loading = null
+    if (extra.loading) {
+      loading = ElLoading.service({
+        lock: true,
+        text: extra.text || 'Loading',
+        background: 'rgba(0, 0, 0, 0.7)',
+      })
+    }
+    return new Promise<any>((resolve, reject) => {
+      AdminRoleAPI.del(body)
+        .then((response) => {
+          resolve(response.data)
+          ElMessage.success(response.msg)
+          loading && loading.close()
+        })
+        .catch((error) => {
+          loading && loading.close()
+          reject(error)
+        })
+    })
+  }
+
   return {
     getList,
+    add,
+    edit,
+    del,
   }
 })
 
