@@ -4,7 +4,7 @@ import { store } from '@/store'
 
 import type { MenuVO } from '@/api/menu/model'
 import { TOKEN_KEY } from '@/enums/CacheEnum'
-import request from '@/utils/request'
+import request, { post } from '@/utils/request'
 import { settings } from 'nprogress'
 import { ElLoading, ElNotification } from 'element-plus'
 
@@ -96,10 +96,23 @@ export const useMenuStore = defineStore('menu', () => {
     })
   }
 
+  function del(body: any) {
+    return new Promise(async (resolve, reject) => {
+      const response: any = await post({
+        url: '/api/v1/menu/del',
+        data: body,
+        loading: true,
+      })
+      ElMessage.success(response.msg)
+      resolve(response)
+    })
+  }
+
   return {
     getMenu,
     addMenu,
     editMenu,
+    del,
   }
 })
 

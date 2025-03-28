@@ -97,7 +97,7 @@ declare global {
     component: string
     created_at: string
     delete_time: string
-    id: number
+    id?: number
     meta: any
     name: string
     path: string

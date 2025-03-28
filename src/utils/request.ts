@@ -1,11 +1,14 @@
 import axios from 'axios'
 // import { useAdminStoreHook } from "@/store/modules/user";
 import { ResultEnum } from '@/enums/ResultEnum'
-import { ElMessage } from 'element-plus'
+import { ElLoading, ElMessage } from 'element-plus'
 import { TOKEN_KEY } from '@/enums/CacheEnum'
 import { useAdminStoreHook } from '@/store'
 import router from '@/router'
-
+// const { t, te } = useI18n()
+import i18n from '@/lang/index'
+// import { inject } from 'vue'
+// const i18n: any = inject('i18n') // 注入 i18n 实例
 // 创建 axios 实例
 const service = axios.create({
   baseURL: import.meta.env.VITE_APP_BASE_API,
@@ -94,6 +97,93 @@ service.interceptors.response.use(
     return Promise.reject(error.message)
   },
 )
+
+interface postData {
+  url: string
+  data: object
+  headers?: object
+  loading?: boolean
+  text?: string
+}
+export function post(
+  data: postData = {
+    url: '',
+    data: {},
+    headers: {},
+    loading: false,
+    text: '',
+  },
+) {
+  if (!data.text) data.text = i18n.global.t('common.loading', 'Loading')
+  let loading = null
+  if (data.loading) {
+    loading = ElLoading.service({
+      lock: true,
+      text: data.text || 'Loading',
+      background: 'rgba(0, 0, 0, 0.7)',
+    })
+  }
+  return new Promise((resolve, reject) => {
+    service({
+      url: data.url,
+      method: 'post',
+      data: data.data,
+      headers: data.headers,
+    })
+      .then((response) => {
+        resolve(response)
+      })
+      .catch((error) => {
+        reject(error)
+      })
+      .finally(() => {
+        loading && loading.close()
+      })
+  })
+}
+interface getData {
+  url: string
+  params: object
+  headers?: object
+  loading?: boolean
+  text?: string
+}
+export function get(
+  data: getData = {
+    url: '',
+    params: {},
+    headers: {},
+    loading: false,
+    text: i18n.global.t('common.loading', 'Loading'),
+  },
+) {
+  if (!data.text) data.text = i18n.global.t('common.loading', 'Loading')
+  let loading = null
+  if (data.loading) {
+    loading = ElLoading.service({
+      lock: true,
+      text: data.text || 'Loading',
+      background: 'rgba(0, 0, 0, 0.7)',
+    })
+  }
+  return new Promise((resolve, reject) => {
+    service({
+      url: data.url,
+      method: 'get',
+      params: data.params,
+      headers: data.headers,
+    })
+      .then((response) => {
+        resolve(response)
+      })
+      .catch((error) => {
+        reject(error)
+      })
+      .finally(() => {
+        loading && loading.close()
+      })
+  })
+}
 
 // 导出 axios 实例
 export default service

@@ -99,7 +99,7 @@
 
 <script setup lang="ts">
 const value1 = ref(true)
-import { useSettingsStore, useAdminStore } from '@/store'
+import { useSettingsStore, useAdminStore, usePermissionStore } from '@/store'
 import type { LoginData } from '@/api/auth/model'
 import type { FormInstance } from 'element-plus'
 import { useRoute } from 'vue-router'
@@ -107,7 +107,7 @@ import type { LocationQuery, LocationQueryValue } from 'vue-router'
 import router from '@/router'
 import defaultSettings from '@/settings'
 import { ThemeEnum } from '@/enums/ThemeEnum'
-
+import type { RouteRecordRaw } from 'vue-router'
 const settingsStore = useSettingsStore()
 const adminStore = useAdminStore()
 
@@ -176,7 +176,21 @@ function getCaptcha() {
     captchaBase64.value = response.data.captchaBase64
   })
 }
+const permissionStore = usePermissionStore()
 
+function handleMenu(menus: any[], p_path: string = '') {
+  let paths: any = []
+  for (const item of menus) {
+    const pPath = p_path + (item.pid === 0 ? item.path : '/' + item.path)
+    if (item.children?.length) {
+      const _paths = handleMenu(item.children, pPath)
+      paths.push(..._paths)
+    } else {
+      paths.push(pPath)
+    }
+  }
+  return paths
+}
 /** 登录 */
 const route = useRoute()
 function handleLogin() {
@@ -185,16 +199,29 @@ function handleLogin() {
       loading.value = true
       adminStore
         .login(loginData.value)
-        .then((data) => {
-          const query: LocationQuery = route.query
-          const redirect = (query.redirect as LocationQueryValue) ?? '/'
-          const otherQueryParams = Object.keys(query).reduce((acc: any, cur: string) => {
-            if (cur !== 'redirect') {
-              acc[cur] = query[cur]
-            }
-            return acc
-          }, {})
-          router.push({ path: redirect, query: otherQueryParams })
+        .then(async (data) => {
+          nextTick(async () => {
+            const query: LocationQuery = route.query
+            const redirect = (query.redirect as LocationQueryValue) ?? '/'
+            const otherQueryParams = Object.keys(query).reduce((acc: any, cur: string) => {
+              if (cur !== 'redirect') {
+                acc[cur] = query[cur]
+              }
+              return acc
+            }, {})
+
+            /**
+             * 登录成功 获取路由
+             * 如果有参数路由并且在路由表里面就跳转参数路由，否则就跳转路由表的第一个；
+             */
+            const accessRoutes = await permissionStore.generateRoutes()
+            accessRoutes.forEach((route: RouteRecordRaw) => router.addRoute(route))
+            const urls = await handleMenu(accessRoutes, '')
+            const _redirect = redirect.split('?')[0]
+            const url = !urls.length ? redirect : urls.includes(_redirect) ? redirect : urls[0]
+            console.log('url======00', url)
+            router.push({ path: url, query: otherQueryParams })
+          })
         })
         .catch(() => {
           getCaptcha()

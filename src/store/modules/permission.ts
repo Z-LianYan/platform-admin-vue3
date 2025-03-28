@@ -111,6 +111,7 @@ export const usePermissionStore = defineStore('permission', () => {
     mixLeftMenus,
     setMixLeftMenus,
     resetRouter,
+    isRoutesLoaded,
   }
 })
 

@@ -10,7 +10,7 @@
     >
       <el-form-item :label="$t('common.keywords')" prop="title">
         <el-input
-          @keyup.enter.native="getMenu"
+          @keyup.enter.native="getList"
           v-model="fetchOptions.keywords"
           :placeholder="$t('menuPage.listFilterForm.k_s_placeholder')"
         />
@@ -23,6 +23,9 @@
     </el-form>
   </el-card>
   <el-card class="card-margin">
+    <el-button type="text" @click="add" icon="plus" style="float: right">{{
+      $t('common.add', '新增')
+    }}</el-button>
     <el-table
       v-loading="loading"
       :data="tableData"
@@ -46,7 +49,7 @@
             :class="[scope.row.meta.icon, 'sub-el-icon']"
           ></i>
           <svg-icon v-else-if="scope.row.meta.icon" :icon-class="scope.row.meta.icon" />
-          <svg-icon v-else icon-class="menu" />
+          <!-- <svg-icon v-else icon-class="menu" /> -->
           {{ scope.row.meta.title }}
         </template>
       </el-table-column>
@@ -120,6 +123,7 @@ import AddEdit from './AddEdit.vue'
 import type { RouteRecordRaw } from 'vue-router'
 import { filterOption } from 'element-plus/es/components/mention/src/helper.mjs'
 import router from '@/router'
+const { t, te } = useI18n()
 defineOptions({
   name: 'Menu',
   inheritAttrs: false, //控制是否继承父组件传递过来的属性
@@ -133,7 +137,7 @@ const fetchOptions = reactive({
 })
 const loading = ref<boolean>(false)
 const tableData = ref<RouteRow[]>([])
-const getMenu = async function () {
+const getList = async function () {
   loading.value = true
   const result: any = await useMenu.getMenu(fetchOptions)
   console.log('result=====>>>', result)
@@ -144,7 +148,7 @@ const getMenu = async function () {
 }
 
 onMounted(() => {
-  getMenu()
+  getList()
 })
 
 const addEditRef: any = ref(null)
@@ -154,26 +158,48 @@ function handleDropdownClick(val: any, row: RouteRow) {
       op_type: val,
       row,
       fun: async () => {
-        await getMenu()
+        await getList()
       },
       menu: tableData.value,
     })
   } else if (['del'].includes(val)) {
     console.log('删除')
+    del(row)
   }
 }
+function add() {
+  addEditRef.value.open({
+    op_type: 'add',
+    fun: async () => {
+      await getList()
+    },
+    menu: tableData.value,
+  })
+}
+function del(row: any) {
+  ElMessageBox.confirm(t('common.delConfirm.describe'), t('common.delConfirm.title'), {
+    confirmButtonText: t('common.sure'),
+    cancelButtonText: t('common.cancel'),
+    type: 'warning',
+  })
+    .then(async () => {
+      await useMenu.del({
+        id: row.id,
+      })
+      getList()
+    })
+    .catch(() => {})
+}
 function handleSizeChange(val: number) {
-  console.log('handleSizeChange====>>', val)
   fetchOptions.limit = val
-  getMenu()
+  getList()
 }
 function handleCurrentChange(val: number) {
-  console.log('handleCurrentChange====>>', val)
   fetchOptions.page = val
-  getMenu()
+  getList()
 }
 function onFilter() {
-  getMenu()
+  getList()
 }
 </script>
 

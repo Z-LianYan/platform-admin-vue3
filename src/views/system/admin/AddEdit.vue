@@ -95,7 +95,7 @@ interface RuleForm {
   avatar: string
   status: number
   id?: number
-  role_id?: number
+  role_id?: string
   password?: string
 }
 const originRuleForm = {
@@ -104,7 +104,7 @@ const originRuleForm = {
   avatar: '',
   status: 1,
   id: 0,
-  role_id: 0,
+  role_id: '',
   password: '',
 }
 const ruleForm = reactive<RuleForm>(_.cloneDeep(originRuleForm))
@@ -222,7 +222,7 @@ async function getRoleList(param: { keywords?: string; need_ids?: number[] }) {
 function roleIdsRemoteMethod(query: string) {
   getRoleList({
     keywords: query,
-    need_ids: ruleForm.role_id ? [ruleForm.role_id] : [],
+    need_ids: ruleForm.role_id ? [Number(ruleForm.role_id)] : [],
   })
 }
 defineExpose({

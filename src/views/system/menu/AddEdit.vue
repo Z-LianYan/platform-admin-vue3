@@ -328,21 +328,21 @@ const rules = reactive<FormRules<RuleForm>>({
     },
   ],
   title: [
-    { required: true, message: t('menuPage.message.title.required'), trigger: 'blur' },
-    { min: 1, max: 20, message: t('menuPage.message.title.limit'), trigger: 'blur' },
+    { required: true, message: t('menuPage.message.title.required'), trigger: 'change' },
+    { min: 1, max: 20, message: t('menuPage.message.title.limit'), trigger: 'change' },
   ],
   name: [
     {
       required: true,
       message: t('menuPage.message.name.required'),
-      trigger: 'blur',
+      trigger: 'change',
     },
   ],
   path: [
     {
       required: true,
       message: t('menuPage.message.path.required'),
-      trigger: 'blur',
+      trigger: 'change',
     },
   ],
   component: [
@@ -350,7 +350,7 @@ const rules = reactive<FormRules<RuleForm>>({
       type: 'string',
       required: true,
       message: t('menuPage.message.component.required'),
-      trigger: 'blur',
+      trigger: 'change',
     },
   ],
   redirect: [
@@ -358,7 +358,7 @@ const rules = reactive<FormRules<RuleForm>>({
       type: 'string',
       required: false,
       message: t('menuPage.message.redirect.required'),
-      trigger: 'blur',
+      trigger: 'change',
     },
   ],
   status: [
@@ -399,9 +399,9 @@ const rules = reactive<FormRules<RuleForm>>({
   ],
   icon: [
     {
-      required: true,
+      required: false,
       message: t('menuPage.message.icon.required'),
-      trigger: 'blur',
+      trigger: 'change',
     },
   ],
   affix: [
@@ -419,7 +419,7 @@ const rules = reactive<FormRules<RuleForm>>({
  * @param filterId
  */
 function recursionMenu(menu: RouteRow[], filterId: number) {
-  let pids: number[] = []
+  let pids: any[] = []
   if (!menu.length) return pids
   for (const item of menu) {
     const _pids = recursionMenu(item.children, filterId)
@@ -439,7 +439,7 @@ const open = async function ({
   menu = [],
 }: {
   op_type: string
-  row: RouteRow
+  row?: RouteRow
   fun: Function
   menu: RouteRow[]
 }) {
@@ -448,7 +448,7 @@ const open = async function ({
   drawer.value = true
   menuList.value = _.cloneDeep(menu)
   menuList.value.unshift(topMenu)
-  if (['edit'].includes(op_type)) {
+  if (['edit'].includes(op_type) && row) {
     recursionHanderMenu(menuList.value, row.id)
     ruleForm.title = row?.meta?.title || ''
     ruleForm.alwaysShow = row?.meta?.alwaysShow || 0
@@ -478,8 +478,10 @@ const open = async function ({
       need_ids: row.role_ids || [],
     })
   } else {
-    ruleForm.pid = row.id
-    pids.value = recursionMenu(menuList.value, row.id)
+    if (row?.id) {
+      ruleForm.pid = row.id
+      pids.value = recursionMenu(menuList.value, row.id)
+    }
     recursionHanderMenu(menuList.value)
   }
 }
@@ -504,6 +506,8 @@ const close = function () {
   ruleForm.role_ids = []
 
   drawer.value = false
+
+  pids.value = []
 
   // resetForm(ruleFormRef.value)
 }
@@ -540,7 +544,7 @@ async function submitForm(formEl: FormInstance | undefined) {
         await useMenu.editMenu(
           {
             ...ruleForm,
-            ...ruleForm,
+            sort: Number(ruleForm.sort),
             meta: {
               title: ruleForm.title,
               alwaysShow: ruleForm.alwaysShow,

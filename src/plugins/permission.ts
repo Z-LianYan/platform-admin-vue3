@@ -14,7 +14,6 @@ export function setupPermission() {
   const whiteList = ['/login']
 
   router.beforeEach(async (to, from, next) => {
-    console.log('beforeEach===>>', to, from)
     NProgress.start()
     const hasToken = localStorage.getItem(TOKEN_KEY)
     if (hasToken) {
@@ -38,9 +37,11 @@ export function setupPermission() {
         } else {
           const permissionStore = usePermissionStore()
           try {
-            await adminStore.getAdminInfo()
-            const accessRoutes = await permissionStore.generateRoutes()
-            accessRoutes.forEach((route: RouteRecordRaw) => router.addRoute(route))
+            if (!permissionStore.isRoutesLoaded) {
+              await adminStore.getAdminInfo()
+              const accessRoutes = await permissionStore.generateRoutes()
+              accessRoutes.forEach((route: RouteRecordRaw) => router.addRoute(route))
+            }
             next({ ...to, replace: true })
           } catch (error: any) {
             console.log('报错了', error.message)

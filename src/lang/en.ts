@@ -29,6 +29,7 @@ export default {
       title: 'Tips',
       describe: 'This operation will permanently delete the data. continue?',
     },
+    loading: 'Loading',
   },
   route: {
     System: 'System set',

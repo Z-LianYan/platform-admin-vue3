@@ -31,6 +31,7 @@ export default {
       title: '温馨提示',
       describe: '此操作将永久删除该数据。继续吗？',
     },
+    loading: '加载中...',
   },
   route: {
     System: '系统设置',
