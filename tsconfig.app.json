@@ -9,7 +9,7 @@
     "paths": {
       "@/*": ["./src/*"]
     },
-    "types": ["element-plus/global"],
+    "types": ["element-plus/global","vite/client", "vue"],
     "noImplicitThis": true
   }
 }
