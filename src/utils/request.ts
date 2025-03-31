@@ -100,7 +100,7 @@ service.interceptors.response.use(
 
 interface postData {
   url: string
-  data: object
+  data?: object | null
   headers?: object
   loading?: boolean
   text?: string
@@ -143,7 +143,7 @@ export function post(
 }
 interface getData {
   url: string
-  params: object
+  params?: object
   headers?: object
   loading?: boolean
   text?: string

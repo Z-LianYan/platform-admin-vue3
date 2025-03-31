@@ -37,12 +37,17 @@ export function setupPermission() {
         } else {
           const permissionStore = usePermissionStore()
           try {
-            if (!permissionStore.isRoutesLoaded) {
-              await adminStore.getAdminInfo()
-              const accessRoutes = await permissionStore.generateRoutes()
-              accessRoutes.forEach((route: RouteRecordRaw) => router.addRoute(route))
+            await adminStore.getAdminInfo()
+            const accessRoutes = await permissionStore.generateRoutes()
+            accessRoutes.forEach((route: RouteRecordRaw) => router.addRoute(route))
+            if (to.path === '/') {
+              // 登录页面跳转
+              const url = await handleMenu(accessRoutes, '')[0]
+              next({ path: url, replace: true })
+            } else {
+              next({ ...to, replace: true })
             }
-            next({ ...to, replace: true })
+            // next({ ...to, replace: true })
           } catch (error: any) {
             console.log('报错了', error.message)
             // 路由加载失败，重置 token 并重定向到登录页
@@ -83,4 +88,18 @@ function getPageTitle(pageTitle: string) {
     return `${pageTitle} - ${title}`
   }
   return `${title}`
+}
+
+function handleMenu(menus: any[], p_path: string = '') {
+  let paths: any = []
+  for (const item of menus) {
+    const pPath = p_path + (item.pid === 0 ? item.path : '/' + item.path)
+    if (item.children?.length) {
+      const _paths = handleMenu(item.children, pPath)
+      paths.push(..._paths)
+    } else {
+      paths.push(pPath)
+    }
+  }
+  return paths
 }

@@ -34,7 +34,7 @@ export interface MenuVO {
   /**
    * 父菜单ID
    */
-  parentId?: number
+  pid?: number
   /**
    * 按钮权限标识
    */
@@ -55,14 +55,11 @@ export interface MenuVO {
    * 菜单排序(数字越小排名越靠前)
    */
   sort?: number
-  // /**
-  //  * 菜单类型
-  //  */
-  // type?: MenuTypeEnum
-  // /**
-  //  * 菜单是否可见(1:显示;0:隐藏)
-  //  */
-  // visible?: number
+
+  /**
+   * 菜单是否可见(1:显示;0:隐藏)
+   */
+  hidden?: number
 }
 
 /**
@@ -76,15 +73,15 @@ export interface MenuForm {
   /**
    * 父菜单ID
    */
-  parentId?: number
+  pid?: number
   /**
    * 菜单名称
    */
   name?: string
   /**
-   * 菜单是否可见(1:是;0:否;)
+   * 菜单是否隐藏(1:是;0:否;)
    */
-  visible: number
+  hidden: number
   icon?: string
   /**
    * 排序
@@ -104,14 +101,13 @@ export interface MenuForm {
   redirect?: string
 
   /**
-   * 菜单类型
+   * 角色权限
    */
-  type: MenuTypeEnum
-
+  role_ids?: string
   /**
-   * 权限标识
+   * 管理员权限
    */
-  perm?: string
+  admin_ids?: string
   /**
    * 【菜单】是否开启页面缓存
    */

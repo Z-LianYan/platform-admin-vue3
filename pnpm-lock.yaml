@@ -41,6 +41,9 @@ importers:
       pinia:
         specifier: ^2.3.0
         version: 2.3.0(typescript@5.6.3)(vue@3.5.13(typescript@5.6.3))
+      qiniu-js:
+        specifier: 4.0.0-beta.6
+        version: 4.0.0-beta.6
       unocss:
         specifier: ^0.65.4
         version: 0.65.4(postcss@5.2.18)(rollup@4.30.1)(vite@6.0.7(@types/node@22.10.5)(jiti@2.4.2)(sass-embedded@1.83.1)(sass@1.83.1)(tsx@4.19.2))(vue@3.5.13(typescript@5.6.3))
@@ -2773,6 +2776,9 @@ packages:
   punycode@2.3.1:
     resolution: {integrity: sha512-vYt7UD1U9Wg6138shLtLOvdAu+8DsC/ilFtEVHcH+wydcSpNE20AfSOduf6MkRFahL5FY7X1oU7nKVZFtfq8Fg==}
     engines: {node: '>=6'}
+
+  qiniu-js@4.0.0-beta.6:
+    resolution: {integrity: sha512-XNNlgwiEq7wERK+Xew9L+Q7ql0PHV8F4LbW99BWnRSP94IlAP0GQxKiIhgrG7qhDNyjKJop3mYdlWOqbtPxKew==}
 
   qs@6.13.1:
     resolution: {integrity: sha512-EJPeIn0CYrGu+hli1xilKAPXODtJ12T0sP63Ijx2/khC2JtuaN3JyNIpvmnkmaEtha9ocbG4A4cMcr+TvqvwQg==}
@@ -6412,6 +6418,8 @@ snapshots:
   proxy-from-env@1.1.0: {}
 
   punycode@2.3.1: {}
+
+  qiniu-js@4.0.0-beta.6: {}
 
   qs@6.13.1:
     dependencies:

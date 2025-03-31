@@ -1,60 +1,59 @@
-import defaultSettings from "@/settings";
+import defaultSettings from '@/settings'
 
 // 导入 Element Plus 中英文语言包
-import zhCn from "element-plus/es/locale/lang/zh-cn";
-import en from "element-plus/es/locale/lang/en";
-import { store } from "@/store";
-import { DeviceEnum } from "@/enums/DeviceEnum";
-import { SidebarStatusEnum } from "@/enums/SidebarStatusEnum";
+import zhCn from 'element-plus/es/locale/lang/zh-cn'
+import en from 'element-plus/es/locale/lang/en'
+import { store } from '@/store'
+import { DeviceEnum } from '@/enums/DeviceEnum'
+import { SidebarStatusEnum } from '@/enums/SidebarStatusEnum'
+import CommonApi from '@/api/common'
 
 // setup
-export const useAppStore = defineStore("app", () => {
+export const useAppStore = defineStore('app', () => {
   // state
-  const device = useStorage("device", DeviceEnum.DESKTOP);
-  const size = useStorage("size", defaultSettings.size);
-  const language = useStorage("language", defaultSettings.language);
-  const sidebarStatus = useStorage("sidebarStatus", SidebarStatusEnum.CLOSED);
+  const device = useStorage('device', DeviceEnum.DESKTOP)
+  const size = useStorage('size', defaultSettings.size)
+  const language = useStorage('language', defaultSettings.language)
+  const sidebarStatus = useStorage('sidebarStatus', SidebarStatusEnum.CLOSED)
 
   const sidebar = reactive({
     opened: sidebarStatus.value === SidebarStatusEnum.OPENED,
     withoutAnimation: false,
-  });
-  const activeTopMenuPath = useStorage("activeTopMenuPath", "");
+  })
+  const activeTopMenuPath = useStorage('activeTopMenuPath', '')
   /**
    * 根据语言标识读取对应的语言包
    */
   const locale = computed(() => {
-    if (language?.value == "en") {
-      return en;
+    if (language?.value == 'en') {
+      return en
     } else {
-      return zhCn;
+      return zhCn
     }
-  });
+  })
 
   // actions
   function toggleSidebar() {
-    sidebar.opened = !sidebar.opened;
-    sidebarStatus.value = sidebar.opened
-      ? SidebarStatusEnum.OPENED
-      : SidebarStatusEnum.CLOSED;
+    sidebar.opened = !sidebar.opened
+    sidebarStatus.value = sidebar.opened ? SidebarStatusEnum.OPENED : SidebarStatusEnum.CLOSED
   }
 
   function closeSideBar() {
-    sidebar.opened = false;
-    sidebarStatus.value = SidebarStatusEnum.CLOSED;
+    sidebar.opened = false
+    sidebarStatus.value = SidebarStatusEnum.CLOSED
   }
 
   function openSideBar() {
-    sidebar.opened = true;
-    sidebarStatus.value = SidebarStatusEnum.OPENED;
+    sidebar.opened = true
+    sidebarStatus.value = SidebarStatusEnum.OPENED
   }
 
   function toggleDevice(val: string) {
-    device.value = val;
+    device.value = val
   }
 
   function changeSize(val: string) {
-    size.value = val;
+    size.value = val
   }
   /**
    * 切换语言
@@ -62,14 +61,26 @@ export const useAppStore = defineStore("app", () => {
    * @param val
    */
   function changeLanguage(val: string) {
-    language.value = val;
+    language.value = val
   }
   /**
    * 混合模式顶部切换
    */
   function activeTopMenu(val: string) {
-    activeTopMenuPath.value = val;
+    activeTopMenuPath.value = val
   }
+
+  function getQiniuToken() {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const res: any = await CommonApi.getQiniuToken()
+        resolve(res.data)
+      } catch (err) {
+        reject(err)
+      }
+    })
+  }
+
   return {
     device,
     sidebar,
@@ -84,11 +95,12 @@ export const useAppStore = defineStore("app", () => {
     closeSideBar,
     openSideBar,
     activeTopMenuPath,
-  };
-});
+    getQiniuToken,
+  }
+})
 
 // 手动提供给 useStore() 函数 pinia 实例
 // https://pinia.vuejs.org/zh/core-concepts/outside-component-usage.html#using-a-store-outside-of-a-component
 export function useAppStoreHook() {
-  return useAppStore(store);
+  return useAppStore(store)
 }

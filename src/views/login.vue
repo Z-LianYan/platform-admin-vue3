@@ -67,6 +67,7 @@
               class="flex-1"
               :placeholder="$t('login.captchaCode')"
               @keyup.enter="handleLogin"
+              maxlength="4"
             />
 
             <el-image
@@ -178,19 +179,6 @@ function getCaptcha() {
 }
 const permissionStore = usePermissionStore()
 
-function handleMenu(menus: any[], p_path: string = '') {
-  let paths: any = []
-  for (const item of menus) {
-    const pPath = p_path + (item.pid === 0 ? item.path : '/' + item.path)
-    if (item.children?.length) {
-      const _paths = handleMenu(item.children, pPath)
-      paths.push(..._paths)
-    } else {
-      paths.push(pPath)
-    }
-  }
-  return paths
-}
 /** 登录 */
 const route = useRoute()
 function handleLogin() {
@@ -209,18 +197,7 @@ function handleLogin() {
               }
               return acc
             }, {})
-
-            /**
-             * 登录成功 获取路由
-             * 如果有参数路由并且在路由表里面就跳转参数路由，否则就跳转路由表的第一个；
-             */
-            const accessRoutes = await permissionStore.generateRoutes()
-            accessRoutes.forEach((route: RouteRecordRaw) => router.addRoute(route))
-            const urls = await handleMenu(accessRoutes, '')
-            const _redirect = redirect.split('?')[0]
-            const url = !urls.length ? redirect : urls.includes(_redirect) ? redirect : urls[0]
-            console.log('url======00', url)
-            router.push({ path: url, query: otherQueryParams })
+            router.push({ path: redirect, query: otherQueryParams })
           })
         })
         .catch(() => {

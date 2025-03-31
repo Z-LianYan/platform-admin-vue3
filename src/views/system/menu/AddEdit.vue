@@ -20,6 +20,7 @@
       </el-form-item>
       <el-form-item :label="$t('menuPage.pid')" prop="pid">
         <el-cascader
+          style="width: 300px"
           v-model="pids"
           :options="menuList"
           clearable

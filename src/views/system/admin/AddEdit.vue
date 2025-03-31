@@ -59,7 +59,9 @@
           <el-radio :label="0" size="large">{{ $t('common.disable') }}</el-radio>
         </el-radio-group>
       </el-form-item>
-      <el-form-item :label="$t('adminPage.avatar')" prop="role_id"> </el-form-item>
+      <el-form-item :label="$t('adminPage.avatar')" prop="role_id">
+        <QiniuUpload />
+      </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="submitForm(ruleFormRef)">
           {{ $t('common.submit') }}
@@ -70,7 +72,7 @@
   </el-drawer>
 </template>
 <script setup lang="ts">
-import { useMenuStore, useAdminStore, useAdminRoleStore } from '@/store'
+import { useMenuStore, useAdminStore, useAdminRoleStore, useAppStore } from '@/store'
 import type { FormInstance, FormRules, TransferDataItem } from 'element-plus'
 import { translateRouteTitle } from '@/utils/i18n'
 import type { RouteRecordRaw } from 'vue-router'
@@ -85,6 +87,7 @@ defineOptions({
 })
 
 const useAdmin = useAdminStore()
+
 const props = defineProps({})
 
 const ruleFormRef = ref<FormInstance>()
@@ -174,6 +177,7 @@ const close = function () {
 
   drawer.value = false
 }
+
 onMounted(async () => {})
 
 async function submitForm(formEl: FormInstance | undefined) {

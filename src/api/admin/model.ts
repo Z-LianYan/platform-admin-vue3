@@ -13,7 +13,7 @@ export interface AdminInfo {
 /**
  * 用户查询对象类型
  */
-export interface UserQuery extends PageQuery {
+export interface AdminQuery extends PageQuery {
   keywords?: string
   status?: number
   deptId?: number
@@ -72,47 +72,4 @@ export interface AdminPageVO {
    * 创建时间
    */
   updated_at?: Date
-}
-
-/**
- * 用户表单类型
- */
-export interface UserForm {
-  /**
-   * 用户头像
-   */
-  avatar?: string
-  /**
-   * 部门ID
-   */
-  deptId?: number
-  /**
-   * 邮箱
-   */
-  email?: string
-  /**
-   * 性别
-   */
-  gender?: number
-  /**
-   * 用户ID
-   */
-  id?: number
-  mobile?: string
-  /**
-   * 昵称
-   */
-  nickname?: string
-  /**
-   * 角色ID集合
-   */
-  roleIds?: number[]
-  /**
-   * 用户状态(1:正常;0:禁用)
-   */
-  status?: number
-  /**
-   * 用户名
-   */
-  username?: string
 }

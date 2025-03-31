@@ -42,8 +42,10 @@ export const usePermissionStore = defineStore('permission', () => {
       tmpRoute.component =
         tmpRoute.component?.toString() === 'Layout'
           ? Layout
-          : modules[`../../views/${tmpRoute.component}.vue`] ||
-            modules['../../views/error-page/404.vue']
+          : tmpRoute.component?.toString() === 'noComponent'
+            ? ''
+            : modules[`../../views/${tmpRoute.component}.vue`] ||
+              modules['../../views/error-page/404.vue']
       if (tmpRoute.children) {
         tmpRoute.children = filterAsyncRoutes(route.children)
       }
