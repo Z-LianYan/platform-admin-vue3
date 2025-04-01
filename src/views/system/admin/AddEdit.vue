@@ -59,8 +59,8 @@
           <el-radio :label="0" size="large">{{ $t('common.disable') }}</el-radio>
         </el-radio-group>
       </el-form-item>
-      <el-form-item :label="$t('adminPage.avatar')" prop="role_id">
-        <QiniuUpload />
+      <el-form-item :label="$t('adminPage.avatar')" prop="avatar">
+        <QiniuUpload uploadPrefix="avatar/admin/" v-model="avatars" />
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="submitForm(ruleFormRef)">
@@ -91,6 +91,8 @@ const useAdmin = useAdminStore()
 const props = defineProps({})
 
 const ruleFormRef = ref<FormInstance>()
+
+const avatars = ref<any>([])
 
 interface RuleForm {
   name: string
@@ -123,7 +125,7 @@ const rules = reactive<FormRules<RuleForm>>({
   phone: [{ required: true, message: t('adminPage.message.phone.required'), trigger: 'blur' }],
   avatar: [
     {
-      required: true,
+      required: false,
       message: t('adminPage.message.avatar.required'),
       trigger: 'blur',
     },
@@ -160,6 +162,10 @@ const open = async function ({ op_type, row, fun }: { op_type: string; row?: any
 
     ruleForm.id = row?.id || 0
 
+    avatars.value.push({
+      url: row?.avatar,
+    })
+
     await getRoleList({
       keywords: '',
       need_ids: row.role_ids || [],
@@ -174,22 +180,25 @@ const close = function () {
   ruleForm.status = originRuleForm.status
   ruleForm.id = originRuleForm.id
   ruleForm.role_id = originRuleForm.role_id
+  ruleForm.password = originRuleForm.password
+
+  avatars.value = []
 
   drawer.value = false
 }
 
 onMounted(async () => {})
-
+// const emit = defineEmits([])
 async function submitForm(formEl: FormInstance | undefined) {
   if (!formEl) return
   await formEl.validate(async (valid, fields) => {
     if (valid) {
-      console.log('submit!', opType.value)
-      // return
+      ruleForm.avatar = avatars.value[0]?.url
       if (['add'].includes(opType.value)) {
         await useAdmin.add(ruleForm, {
           loading: true,
         })
+        close()
       }
 
       if (['edit'].includes(opType.value)) {
@@ -197,7 +206,6 @@ async function submitForm(formEl: FormInstance | undefined) {
           loading: true,
         })
       }
-
       openFn.value()
     } else {
       console.log('error submit!', fields)

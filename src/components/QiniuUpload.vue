@@ -25,11 +25,20 @@
   </el-dialog> -->
 
   <el-upload
+    ref="uploadRef"
     v-model:file-list="fileList"
-    action="https://run.mocky.io/v3/9d059bf9-4660-45f2-925d-ce80ad6c4d15"
+    :action="upload_qiniu_host"
     list-type="picture-card"
+    :data="qiniuData"
+    :auto-upload="true"
     :on-preview="handlePreview"
     :on-remove="handleRemove"
+    :before-upload="beforeUpload"
+    :on-success="handleAddUploadSuccess"
+    :on-progress="handleProgress"
+    :on-error="handleUploadError"
+    :on-exceed="handleExceed"
+    :limit="imageLimit"
   >
     <el-icon><Plus /></el-icon>
   </el-upload>
@@ -42,73 +51,51 @@
 <script setup lang="ts">
 import { useAppStore } from '@/store'
 import * as qiniu from 'qiniu-js'
-import type { UploadProps, UploadUserFile } from 'element-plus'
+import dayjs from 'dayjs'
+
+import { ElNotification, ElMessage, type UploadProps, type UploadUserFile } from 'element-plus'
 const dialogImageUrl = ref<string>('')
 const dialogVisible = ref<boolean>(false)
 const qiniuData = reactive<any>({
   key: '',
   token: '',
 })
-const beforeUploadNum = ref<number>(0)
-const uploadSuccessNum = ref<number>(0)
 
-const upload_qiniu_url = ref<string>() //上传七牛url
-const upload_qiniu_addr = ref<string>()
+const upload_qiniu_host = ref<string>() //上传七牛url
+const static_visit_host = ref<string>()
 
 const useApp = useAppStore()
+const fileList = computed<any[]>(() => props.modelValue)
 
-const fileList = reactive<UploadUserFile[]>([
-  {
-    name: 'food.jpeg',
-    url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100',
-  },
-  {
-    name: 'plant-1.png',
-    url: '/images/plant-1.png',
-  },
-  {
-    name: 'food.jpeg',
-    url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100',
-  },
-  {
-    name: 'plant-2.png',
-    url: '/images/plant-2.png',
-  },
-  {
-    name: 'food.jpeg',
-    url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100',
-  },
-  {
-    name: 'figure-1.png',
-    url: '/images/figure-1.png',
-  },
-  {
-    name: 'food.jpeg',
-    url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100',
-  },
-  {
-    name: 'figure-2.png',
-    url: '/images/figure-2.png',
-  },
-])
 onMounted(async () => {
   const qiniuToken: any = await useApp.getQiniuToken()
-  console.log('qiniuToken===>>', qiniuToken.upload_token)
   qiniuData.token = qiniuToken.upload_token
+  static_visit_host.value = qiniuToken.static_visit_host
+  let qiniu_result = await qiniu.getUploadUrl(
+    {
+      useCdnDomain: true,
+      region: qiniu.region.z2,
+    },
+    qiniuToken.upload_token,
+  )
+  upload_qiniu_host.value = qiniu_result
 })
 
 defineOptions({
   name: 'QiniuUpload',
   inheritAttrs: false, //控制是否继承父组件传递过来的属性
 })
+
+const emit = defineEmits(['update:modelValue']) // 声明要触发的事件
 const props = defineProps({
-  // iconClass: {
-  //   type: String,
-  //   required: false,
-  //   default: '',
-  // },
-  value: Array,
+  modelValue: {
+    type: Array,
+    default: () => {
+      return []
+    },
+  },
   quality: {
+    //图片压缩质量
     type: Number,
     default: 0.5,
   },
@@ -121,6 +108,12 @@ const props = defineProps({
     default: 100,
   },
   maxWidth: {
+    //压缩图片的最大宽度值
+    type: Number,
+    default: 720,
+  },
+  maxHeight: {
+    //压缩图片的最大高度值
     type: Number,
     default: 720,
   },
@@ -130,100 +123,73 @@ const props = defineProps({
   },
   imageLimit: {
     type: Number,
-    default: 2,
+    default: 1,
   },
   compress: {
     type: Boolean,
     default: true,
   },
 })
-
+function emitInput(fileList: any[]) {
+  let value = []
+  for (let i = 0; i < fileList.length; i++) {
+    value.push(fileList[i].url)
+  }
+  emit('update:modelValue', value)
+}
 function handleRemove(file: any, fileList: any) {
-  // this.emitInput(fileList);
+  //文件列表移除文件时的钩子
+  emitInput(fileList)
 }
 
 function handlePreview(file: any) {
+  //点击文件列表中已上传的文件时的钩子
   dialogImageUrl.value = file.url
   dialogVisible.value = true
 }
 
-async function beforeUpload(file: any) {
-  console.log('beforeUpload---上传前', file)
-  beforeUploadNum.value += 1
-  return new Promise((resolve, reject) => {
-    resolve(false)
-    if (props.compress) {
-      // qiniu
-      //   .compressImage(file, {
-      //     quality: this.quality,
-      //     maxWidth: this.maxWidth, //720,
-      //   })
-      //   .then((compress_res) => {
-      //     // this.$store.dispatch("sourceManager/getUploadQiNiuToken").then(res => {
-      //     // this.qiniuData.token = res.upload_token;
-      //     this.qiniuData.key =
-      //       this.uploadPrefix +
-      //       dayjs().format('YYYYMMDDHHmmss') +
-      //       parseInt(Math.random() * 1000000) +
-      //       file.type.replace('image/', '.')
-      //     // this.upload_qiniu_addr = res.static_host;
-      //     resolve(compress_res.dist)
-      //     // });
-      //   })
-    } else {
-      // this.qiniuData.key =
-      //   this.uploadPrefix +
-      //   dayjs().format('YYYYMMDDHHmmss') +
-      //   parseInt(Math.random() * 1000000) +
-      //   file.type.replace('image/', '.')
-      // resolve(file)
-    }
-  })
+const uploadRef = ref()
+async function beforeUpload(rawFile: any) {
+  qiniuData.key =
+    props.uploadPrefix +
+    dayjs().format('YYYYMMDD') +
+    '/' +
+    dayjs().format('HHmmssSSS') +
+    parseInt(String(Math.random() * 1000000)) +
+    rawFile.type.replace('image/', '.')
+
+  if (props.compress) {
+    const compress_res: any = await qiniu.compressImage(rawFile, {
+      quality: props.quality,
+      maxWidth: props.maxWidth,
+    })
+    const newFile = new File([compress_res.dist], rawFile.name, {
+      type: compress_res.dist.type,
+      lastModified: Date.now(),
+    })
+    return newFile
+  } else {
+    return rawFile
+  }
 }
 function handleProgress(event: any, file: any, fileList: any) {
-  // console.log('文件上传时的钩子',event, file, fileList);
+  console.log('文件上传时的钩子', event, file, fileList)
 }
 function handleAddUploadSuccess(res: any, file: any, fileList: any) {
-  uploadSuccessNum.value += 1
-  // console.log("上传成功呢", res, file, fileList, this.uploadNum);
-  // var url = upload_qiniu_addr.value + res.key;
-  // this.fileList.push({ url: url });
-  // if(this.beforeUploadNum == this.uploadSuccessNum){
-  //   this.emitInput(this.fileList,'clearNum');
-  // }
+  console.log('成功======》〉》', res, file, fileList)
+  const url = static_visit_host.value + '/' + res.key
+  props.modelValue.push({ url })
 }
 function handleUploadError(err: any, file: any, fileList: any) {
-  // console.log("文件上传失败时的钩子", err, file, fileList);
-  beforeUploadNum.value -= 1
+  console.log('文件上传失败时的钩子', err, file, fileList)
 }
 
-function clearFiles() {
-  // console.log("哈哈哈哈", this.$refs.qiniu_upload);
-  // this.$refs.qiniu_upload.clearFiles();
-}
 function handleExceed(files: any, fileList: any) {
-  // this.$message.warning(
-  //   `当前限制选择 ${this.imageLimit} 个图片，本次选择了 ${
-  //     files.length
-  //   } 个图片，共选择了 ${files.length + fileList.length} 个文件`
-  // );
+  ElMessage({
+    message: `只能上传 ${props.imageLimit} 张图片`,
+    type: 'error',
+  })
 }
 </script>
 
-<style scoped lang="scss">
-// .qiniu-upload-image-box {
-.el-upload-list--picture-card .el-upload-list__item {
-  width: 80px;
-  height: 80px;
-}
-.el-upload--picture-card {
-  width: 80px;
-  height: 80px;
-  line-height: 80px;
-  .el-upload-dragger {
-    width: 80px;
-    height: 80px;
-  }
-}
-// }
-</style>
+<style scoped lang="scss"></style>
