@@ -32,12 +32,25 @@
         :label="$t('adminRolePage.role_name', '名称')"
         mini-width="110"
       >
+        <template #default="scope">
+          <CustomInput
+            :key="scope.row.role_name"
+            v-model="scope.row.role_name"
+            placeholder="点击输入内容"
+            @change="handleConfirm($event, scope.row)"
+          />
+        </template>
       </el-table-column>
-      <el-table-column
-        prop="remark"
-        :label="$t('adminRolePage.remark', '备注')"
-        min-width="110"
-      ></el-table-column>
+      <el-table-column prop="remark" :label="$t('adminRolePage.remark', '备注')" min-width="110">
+        <template #default="scope">
+          <CustomInput
+            :key="scope.row.remark"
+            v-model="scope.row.remark"
+            placeholder="点击输入内容"
+            @change="handleConfirm($event, scope.row)"
+          />
+        </template>
+      </el-table-column>
       <el-table-column prop="status_name" :label="$t('common.status', '状态')" width="100">
         <template #default="scope">
           <el-tag :type="scope.row.status === 1 ? 'success' : 'info'" round>{{
@@ -164,6 +177,18 @@ function handleCurrentChange(val: number) {
 }
 function onFilter() {
   getList()
+}
+
+async function handleConfirm(val: string, row: any) {
+  try {
+    await useAdminRole.edit(row, {
+      loading: true,
+    })
+  } catch (err) {
+    getList()
+  } finally {
+    // getList()
+  }
 }
 </script>
 

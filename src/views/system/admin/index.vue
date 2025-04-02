@@ -27,7 +27,15 @@
       $t('common.add', '新增')
     }}</el-button>
     <el-table v-loading="loading" :data="tableData" :border="true" stripe style="width: 100%">
-      <el-table-column prop="name" :label="$t('adminPage.name', '姓名')" width="110">
+      <el-table-column prop="name" :label="$t('adminPage.name', '姓名')">
+        <template #default="scope">
+          <CustomInput
+            :key="scope.row.name"
+            v-model="scope.row.name"
+            placeholder="点击输入内容"
+            @change="handleConfirm($event, scope.row)"
+          />
+        </template>
       </el-table-column>
       <el-table-column prop="avatar" :label="$t('adminPage.avatar', '头像')" width="80">
         <template #default="scope">
@@ -44,14 +52,7 @@
         width="120"
       ></el-table-column>
 
-      <el-table-column prop="role_name" :label="$t('adminPage.role', '角色')" width="180" />
-      <el-table-column prop="last_login_time" :label="$t('adminPage.last_login_time')" width="180">
-        <template #default="scope">{{
-          scope.row.last_login_time
-            ? dayjs(scope.row.last_login_time).format('YYYY-MM-DD HH:mm:ss')
-            : ''
-        }}</template>
-      </el-table-column>
+      <el-table-column prop="role_name" :label="$t('adminPage.role_id', '角色')" width="180" />
 
       <el-table-column prop="status_name" :label="$t('common.status', '状态')" width="100">
         <template #default="scope">
@@ -69,6 +70,14 @@
       <el-table-column prop="updated_at" :label="$t('common.updated_at', '更新时间')">
         <template #default="scope">{{
           scope.row.updated_at ? dayjs(scope.row.updated_at).format('YYYY-MM-DD HH:mm:ss') : ''
+        }}</template>
+      </el-table-column>
+
+      <el-table-column prop="last_login_time" :label="$t('adminPage.last_login_time')" width="180">
+        <template #default="scope">{{
+          scope.row.last_login_time
+            ? dayjs(scope.row.last_login_time).format('YYYY-MM-DD HH:mm:ss')
+            : ''
         }}</template>
       </el-table-column>
 
@@ -110,6 +119,18 @@ defineOptions({
   inheritAttrs: false, //控制是否继承父组件传递过来的属性
 })
 const useAdmin = useAdminStore()
+async function handleConfirm(val: string, row: any) {
+  try {
+    await useAdmin.edit(row, {
+      loading: true,
+    })
+  } catch (err) {
+    getList()
+  } finally {
+    // getList()
+  }
+}
+
 const total = ref<number>(0)
 const fetchOptions = reactive({
   page: 1,

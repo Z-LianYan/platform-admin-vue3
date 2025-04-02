@@ -172,6 +172,10 @@ export default {
       phone: {
         required: "Please enter the administrator's mobile phone number",
       },
+      password: {
+        required: 'Please enter Password',
+        limit: 'Password cannot be less than 6 characters or greater than 50 characters',
+      },
       role_id: {
         required: 'Please select the role to which the administrator belongs',
       },

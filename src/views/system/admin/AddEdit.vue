@@ -23,7 +23,11 @@
         <el-input v-model="ruleForm.phone" type="phone" maxlength="11" minlength="11" />
       </el-form-item>
 
-      <el-form-item :label="$t('adminPage.password')" prop="phone">
+      <el-form-item
+        :label="$t('adminPage.password')"
+        prop="password"
+        v-if="['add'].includes(opType)"
+      >
         <el-input
           v-model="ruleForm.password"
           type="password"
@@ -60,7 +64,7 @@
         </el-radio-group>
       </el-form-item>
       <el-form-item :label="$t('adminPage.avatar')" prop="avatar">
-        <QiniuUpload uploadPrefix="avatar/admin/" v-model="avatars" />
+        <QiniuUpload uploadPrefix="avatar/admin/" v-model="avatars" :limit="1" />
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="submitForm(ruleFormRef)">
@@ -134,7 +138,7 @@ const rules = reactive<FormRules<RuleForm>>({
     {
       required: true,
       message: t('adminPage.message.role_id.required'),
-      trigger: 'blur',
+      trigger: 'change',
     },
   ],
 
@@ -145,6 +149,15 @@ const rules = reactive<FormRules<RuleForm>>({
       message: t('adminPage.message.status.required'),
       trigger: 'change',
     },
+  ],
+  password: [
+    {
+      type: 'string',
+      required: true,
+      message: t('adminPage.message.password.required'),
+      trigger: 'change',
+    },
+    { min: 6, max: 50, message: t('adminPage.message.password.limit'), trigger: 'change' },
   ],
 })
 

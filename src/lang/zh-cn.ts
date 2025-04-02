@@ -172,6 +172,10 @@ export default {
       phone: {
         required: '请输入管理员手机号码',
       },
+      password: {
+        required: '请输入密码',
+        limit: '密码不能少于6位或大于50位',
+      },
       role: {
         required: '请选择管理员所属角色',
       },

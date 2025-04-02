@@ -74,6 +74,7 @@ service.interceptors.response.use(
     // 异常处理
     if (error.response.data) {
       const { code, msg } = error.response.data
+      console.log('=====msg', msg, code)
       if (code === ResultEnum.TOKEN_INVALID) {
         ElMessageBox.confirm('当前页面已失效，请重新登录', '提示', {
           confirmButtonText: '确定',
@@ -91,7 +92,7 @@ service.interceptors.response.use(
           location.reload()
         }, 1000)
       } else {
-        ElMessage.error(msg || '系统出错')
+        ElMessage.error(msg ? String(msg) : '系统出错')
       }
     }
     return Promise.reject(error.message)

@@ -22,7 +22,7 @@
             />
           </template>
           <span v-if="route.path === '/'">首页</span>
-          <span v-else-if="route.meta && route.meta.title" class="ml-1">
+          <span v-if="route.meta && route.meta.title" class="ml-1">
             {{ translateRouteTitle(route.name, route.meta.title) }}
           </span>
         </template>

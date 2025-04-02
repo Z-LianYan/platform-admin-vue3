@@ -54,13 +54,47 @@
         </template>
       </el-table-column>
       <el-table-column prop="address" :label="$t('menuPage.routeName', '路由名称')">
-        <template #default="scope">{{ scope.row.name }}</template>
+        <template #default="scope">
+          <CustomInput
+            :key="scope.row.name"
+            v-model="scope.row.name"
+            placeholder="点击输入内容"
+            @change="handleConfirm($event, scope.row)"
+          />
+        </template>
       </el-table-column>
-      <el-table-column prop="path" :label="$t('menuPage.routePath', '路由路径')" width="180" />
-      <el-table-column prop="component" :label="$t('menuPage.component', '组件')" width="180" />
+      <el-table-column prop="path" :label="$t('menuPage.routePath', '路由路径')">
+        <template #default="scope">
+          <CustomInput
+            :key="scope.row.path"
+            v-model="scope.row.path"
+            placeholder="点击输入内容"
+            @change="handleConfirm($event, scope.row)"
+          />
+        </template>
+      </el-table-column>
+
+      <el-table-column prop="component" :label="$t('menuPage.component', '组件')">
+        <template #default="scope">
+          <CustomInput
+            :key="scope.row.component"
+            v-model="scope.row.component"
+            placeholder="点击输入内容"
+            :width="300"
+            @change="handleConfirm($event, scope.row)"
+          />
+        </template>
+      </el-table-column>
 
       <el-table-column prop="redirect" :label="$t('menuPage.redirect', '重定向')">
-        <template #default="scope">{{ scope.row.redirect }}</template>
+        <template #default="scope">
+          <CustomInput
+            :key="scope.row.redirect"
+            v-model="scope.row.redirect"
+            placeholder="点击输入内容"
+            @change="handleConfirm($event, scope.row)"
+          />
+        </template>
       </el-table-column>
       <el-table-column prop="sort" :label="$t('menuPage.sort', '排序')" width="80" />
       <el-table-column prop="status_name" :label="$t('common.status', '状态')" width="100">
@@ -200,6 +234,17 @@ function handleCurrentChange(val: number) {
 }
 function onFilter() {
   getList()
+}
+async function handleConfirm(val: string, row: any) {
+  try {
+    await useMenu.editMenu(row, {
+      loading: true,
+    })
+  } catch (err) {
+    getList()
+  } finally {
+    // getList()
+  }
 }
 </script>
 

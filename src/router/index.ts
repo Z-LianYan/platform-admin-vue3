@@ -12,6 +12,9 @@ export const constantRoutes: RouteRecordRaw[] = [
     name: 'NotFound',
     component: Layout,
     // redirect: '/system/menu',
+    meta: {
+      hidden: true //隐藏菜单
+    },
     children: [
       {
         path: '401',

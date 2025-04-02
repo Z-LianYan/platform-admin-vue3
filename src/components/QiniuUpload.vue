@@ -38,7 +38,7 @@
     :on-progress="handleProgress"
     :on-error="handleUploadError"
     :on-exceed="handleExceed"
-    :limit="imageLimit"
+    :limit="limit"
   >
     <el-icon><Plus /></el-icon>
   </el-upload>
@@ -121,7 +121,7 @@ const props = defineProps({
     type: String,
     default: '',
   },
-  imageLimit: {
+  limit: {
     type: Number,
     default: 1,
   },
@@ -186,7 +186,7 @@ function handleUploadError(err: any, file: any, fileList: any) {
 
 function handleExceed(files: any, fileList: any) {
   ElMessage({
-    message: `只能上传 ${props.imageLimit} 张图片`,
+    message: `只能上传 ${props.limit} 张图片`,
     type: 'error',
   })
 }

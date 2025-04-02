@@ -148,6 +148,7 @@ export const useAdminStore = defineStore('admin', () => {
           loading && loading.close()
         })
         .catch((error) => {
+          console.log('error====>>', error)
           loading && loading.close()
           reject(error)
         })
