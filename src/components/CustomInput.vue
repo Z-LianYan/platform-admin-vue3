@@ -16,6 +16,7 @@
         v-model="editingValue"
         type="text"
         class="edit-input"
+        placeholder="输入内容"
         @keyup.enter="confirmEdit"
         @keyup.esc="cancelEdit"
         @blur="handleBlur"

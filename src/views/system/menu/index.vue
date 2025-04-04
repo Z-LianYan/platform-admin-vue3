@@ -6,11 +6,11 @@
       class="demo-ruleForm"
       size="default"
       status-icon
-      @submit.native.prevent
+      @submit.prevent
     >
       <el-form-item :label="$t('common.keywords')" prop="title">
         <el-input
-          @keyup.enter.native="getList"
+          @keyup.enter="getList"
           v-model="fetchOptions.keywords"
           :placeholder="$t('menuPage.listFilterForm.k_s_placeholder')"
         />
@@ -96,7 +96,17 @@
           />
         </template>
       </el-table-column>
-      <el-table-column prop="sort" :label="$t('menuPage.sort', '排序')" width="80" />
+      <el-table-column prop="sort" :label="$t('menuPage.sort', '排序')" width="150" >
+        <template #default="scope">
+          <CustomInput
+            :key="scope.row.sort"
+            v-model="scope.row.sort"
+            placeholder="点击输入内容"
+            :width="100"
+            @change="handleConfirm($event, scope.row)"
+          />
+        </template>
+      </el-table-column>
       <el-table-column prop="status_name" :label="$t('common.status', '状态')" width="100">
         <template #default="scope">
           <el-tag :type="scope.row.status === 1 ? 'success' : 'info'" round>{{
@@ -137,7 +147,7 @@
       style="justify-content: center; margin-top: 20px"
       v-model:current-page="fetchOptions.page"
       v-model:page-size="fetchOptions.limit"
-      :page-sizes="[20, 50, 100, 500]"
+      :page-sizes="[10, 20, 50, 100, 500]"
       :small="false"
       :disabled="false"
       :background="false"
@@ -237,6 +247,7 @@ function onFilter() {
 }
 async function handleConfirm(val: string, row: any) {
   try {
+    row.sort = row.sort?Number(row.sort):0;
     await useMenu.editMenu(row, {
       loading: true,
     })

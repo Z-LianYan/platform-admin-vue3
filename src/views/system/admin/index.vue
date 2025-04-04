@@ -6,11 +6,11 @@
       class="demo-ruleForm"
       size="default"
       status-icon
-      @submit.native.prevent
+      @submit.prevent
     >
       <el-form-item :label="$t('common.keywords')" prop="title">
         <el-input
-          @keyup.enter.native="getList"
+          @keyup.enter="getList"
           v-model="fetchOptions.keywords"
           :placeholder="$t('adminPage.listFilterForm.k_s_placeholder')"
         />
@@ -26,7 +26,15 @@
     <el-button type="text" @click="add" icon="plus" style="float: right">{{
       $t('common.add', '新增')
     }}</el-button>
-    <el-table v-loading="loading" :data="tableData" :border="true" stripe style="width: 100%">
+    <el-table
+    v-loading="loading"
+    :data="tableData"
+    :border="true"
+    stripe
+    @sort-change="sortChange"
+    :default-sort="{ prop: 'id', order: 'descending' }"
+    style="width: 100%">
+      <el-table-column prop="id" :label="$t('common.id', '编号')" sortable></el-table-column>
       <el-table-column prop="name" :label="$t('adminPage.name', '姓名')">
         <template #default="scope">
           <CustomInput
@@ -62,7 +70,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="created_at" :label="$t('common.created_at', '创建时间')">
+      <el-table-column prop="created_at" :label="$t('common.created_at', '创建时间')" sortable>
         <template #default="scope">{{
           scope.row.created_at ? dayjs(scope.row.created_at).format('YYYY-MM-DD HH:mm:ss') : ''
         }}</template>
@@ -73,7 +81,7 @@
         }}</template>
       </el-table-column>
 
-      <el-table-column prop="last_login_time" :label="$t('adminPage.last_login_time')" width="180">
+      <el-table-column prop="last_login_time" :label="$t('adminPage.last_login_time')" width="180" sortable>
         <template #default="scope">{{
           scope.row.last_login_time
             ? dayjs(scope.row.last_login_time).format('YYYY-MM-DD HH:mm:ss')
@@ -96,7 +104,7 @@
       style="justify-content: center; margin-top: 20px"
       v-model:current-page="fetchOptions.page"
       v-model:page-size="fetchOptions.limit"
-      :page-sizes="[20, 50, 100, 500]"
+      :page-sizes="[10, 20, 50, 100, 500]"
       :small="false"
       :disabled="false"
       :background="false"
@@ -132,10 +140,13 @@ async function handleConfirm(val: string, row: any) {
 }
 
 const total = ref<number>(0)
-const fetchOptions = reactive({
+const fetchOptions = reactive<any>({
   page: 1,
   limit: 20,
   keywords: '',
+  order:{
+    id: "DESC"
+  }
 })
 const loading = ref<boolean>(false)
 const tableData = ref<RouteRow[]>([])
@@ -199,6 +210,19 @@ function handleCurrentChange(val: number) {
   getList()
 }
 function onFilter() {
+  getList()
+}
+function sortChange(val:any){
+  fetchOptions.order = {};
+  if(val.order){
+    let order = "";
+    if (val.order == "descending") {
+      order = "desc";
+    } else {
+      order = "asc";
+    }
+    fetchOptions.order[val.prop] = order;
+  }
   getList()
 }
 </script>
